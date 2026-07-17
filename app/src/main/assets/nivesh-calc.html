@@ -308,7 +308,7 @@
       <div class="calc-card" onclick="openCalc('loan')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
         <div class="name">Loan / EMI</div>
-        <div class="desc">Monthly instalment on a loan</div>
+        <div class="desc">EMI, plus what prepaying saves you</div>
       </div>
     </div>
 
@@ -630,20 +630,60 @@
       <input type="range" id="loan_years" min="1" max="30" step="1" value="20">
     </div>
 
-    <div class="result-panel">
-      <div class="result-label">Monthly EMI</div>
-      <div class="result-figure" id="loan_result">₹0</div>
-      <div class="bar-wrap">
-        <div class="bar"><div class="seg invested" id="loan_bar_principal"></div><div class="seg interest" id="loan_bar_interest"></div></div>
-        <div class="legend">
-          <span><i class="dot" style="background:#5F7290"></i>Principal</span>
-          <span><i class="dot" style="background:var(--coral)"></i>Interest</span>
+    <div class="field">
+      <div class="toggle-row" id="loan_subtab_toggle">
+        <div class="toggle-btn active" data-v="emi">EMI</div>
+        <div class="toggle-btn" data-v="prepay">Prepayment</div>
+      </div>
+    </div>
+
+    <div id="loan_emi_panel">
+      <div class="result-panel">
+        <div class="result-label">Monthly EMI</div>
+        <div class="result-figure" id="loan_result">₹0</div>
+        <div class="bar-wrap">
+          <div class="bar"><div class="seg invested" id="loan_bar_principal"></div><div class="seg interest" id="loan_bar_interest"></div></div>
+          <div class="legend">
+            <span><i class="dot" style="background:#5F7290"></i>Principal</span>
+            <span><i class="dot" style="background:var(--coral)"></i>Interest</span>
+          </div>
+        </div>
+        <div class="breakdown-rows">
+          <div class="brow"><span class="k">Total interest payable</span><span class="v" id="loan_interest"></span></div>
+          <div class="brow"><span class="k">Total amount payable</span><span class="v" id="loan_total"></span></div>
         </div>
       </div>
-      <div class="breakdown-rows">
-        <div class="brow"><span class="k">Total interest payable</span><span class="v" id="loan_interest"></span></div>
-        <div class="brow"><span class="k">Total amount payable</span><span class="v" id="loan_total"></span></div>
+    </div>
+
+    <div id="loan_prepay_panel" class="hidden">
+      <div class="field">
+        <div class="field-top"><span class="field-label">One-time extra prepayment</span>
+          <input class="field-value" id="lp_amt_txt" value="₹ 5,00,000"></div>
+        <input type="range" id="lp_amt" min="10000" max="5000000" step="10000" value="500000">
       </div>
+      <div class="field">
+        <div class="field-top"><span class="field-label">Prepayment after</span>
+          <input class="field-value" id="lp_after_txt" value="3 yrs"></div>
+        <input type="range" id="lp_after" min="0" max="29" step="1" value="3">
+      </div>
+      <div class="field">
+        <span class="field-label">What should the prepayment reduce?</span>
+        <div class="toggle-row" id="lp_mode_toggle">
+          <div class="toggle-btn" data-v="reduceEmi">Reduce EMI</div>
+          <div class="toggle-btn active" data-v="reduceTenure">Reduce Tenure</div>
+        </div>
+      </div>
+
+      <div class="result-panel">
+        <div class="result-label" id="lp_result_label">New tenure</div>
+        <div class="result-figure" id="lp_result">0 yrs</div>
+        <div class="result-sub" id="lp_resultsub"></div>
+        <div class="breakdown-rows">
+          <div class="brow"><span class="k">Interest saved</span><span class="v" id="lp_interest_saved"></span></div>
+          <div class="brow"><span class="k">Total amount paid (incl. prepayment)</span><span class="v" id="lp_total_paid"></span></div>
+        </div>
+      </div>
+      <div class="note">Assumes the prepayment happens as a single lump sum right after the EMI for that year. "Reduce Tenure" (keeping the same EMI) usually saves more total interest than "Reduce EMI." Check your lender's prepayment charges — some loans allow free prepayment, others don't.</div>
     </div>
   </div>
 
@@ -1242,6 +1282,62 @@ function calcLoan(){
   document.getElementById('loan_bar_interest').style.width = (100-pPct)+'%';
 }
 
+let loanPrepayMode = 'reduceTenure';
+
+// ================= LOAN PREPAYMENT =================
+function calcLoanPrepay(){
+  const P = parseFloat(document.getElementById('loan_amt').value);
+  const annualRate = parseFloat(document.getElementById('loan_rate').value);
+  const years = parseFloat(document.getElementById('loan_years').value);
+  const prepayAmt = parseFloat(document.getElementById('lp_amt').value);
+  const afterYearsRaw = parseFloat(document.getElementById('lp_after').value);
+
+  const r = annualRate/100/12;
+  const n = years*12;
+  const emi = r===0 ? P/n : P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  const originalTotal = emi*n;
+
+  const afterYears = Math.max(0, Math.min(afterYearsRaw, years-1));
+  const monthsPaid = Math.round(afterYears*12);
+  const balanceBeforePrepay = r===0
+    ? P - emi*monthsPaid
+    : P*Math.pow(1+r,monthsPaid) - emi*((Math.pow(1+r,monthsPaid)-1)/r);
+  const balanceAfterPrepay = Math.max(0, balanceBeforePrepay - prepayAmt);
+  const remainingMonths = n - monthsPaid;
+
+  let newEmi = emi, newRemainingMonths = remainingMonths;
+  if(loanPrepayMode==='reduceEmi'){
+    newEmi = remainingMonths<=0 ? 0 : (r===0 ? balanceAfterPrepay/remainingMonths
+      : balanceAfterPrepay * r * Math.pow(1+r,remainingMonths) / (Math.pow(1+r,remainingMonths)-1));
+  } else {
+    if(balanceAfterPrepay<=0){ newRemainingMonths = 0; }
+    else if(r===0){ newRemainingMonths = balanceAfterPrepay/emi; }
+    else {
+      const denom = emi - balanceAfterPrepay*r;
+      newRemainingMonths = denom<=0 ? remainingMonths : Math.log(emi/denom) / Math.log(1+r);
+    }
+  }
+
+  const totalMonthsNew = monthsPaid + newRemainingMonths;
+  const totalPaidWithPrepay = emi*monthsPaid + prepayAmt + newEmi*newRemainingMonths;
+  const interestSaved = originalTotal - totalPaidWithPrepay;
+
+  document.getElementById('lp_after_txt').value = afterYears + ' yrs';
+
+  if(loanPrepayMode==='reduceEmi'){
+    document.getElementById('lp_result_label').textContent = 'New EMI';
+    document.getElementById('lp_result').textContent = INR(newEmi) + ' /mo';
+    document.getElementById('lp_resultsub').textContent = `down from ${INR(emi)}/mo, same ${years}-year tenure`;
+  } else {
+    const newYears = Math.floor(totalMonthsNew/12), newMonths = Math.round(totalMonthsNew%12);
+    document.getElementById('lp_result_label').textContent = 'New tenure';
+    document.getElementById('lp_result').textContent = `${newYears} yr${newYears!==1?'s':''} ${newMonths} mo`;
+    document.getElementById('lp_resultsub').textContent = `down from ${years} years — same EMI of ${INR(emi)}/mo`;
+  }
+  document.getElementById('lp_interest_saved').textContent = INR(Math.max(0,interestSaved));
+  document.getElementById('lp_total_paid').textContent = INR(totalPaidWithPrepay);
+}
+
 // ================= EPF =================
 function calcEPF(){
   const basic = parseFloat(document.getElementById('epf_basic').value);
@@ -1439,7 +1535,7 @@ try{
 }catch(e){}
 
 function recalcAll(){
-  calcSIP(); calcStepUp(); calcGoalSIP(); calcLumpsum(); calcFD(); calcRD(); calcPPF(); calcSWP(); calcLoan(); calcEPF(); calcNPS(); calcTax();
+  calcSIP(); calcStepUp(); calcGoalSIP(); calcLumpsum(); calcFD(); calcRD(); calcPPF(); calcSWP(); calcLoan(); calcLoanPrepay(); calcEPF(); calcNPS(); calcTax();
 }
 
 // ---- wire up all sliders ----
@@ -1482,9 +1578,31 @@ bindSlider('swp_wd','swp_wd_txt', v=>fmtMoney(v), calcSWP);
 bindSlider('swp_rate','swp_rate_txt', v=>v+' %', calcSWP);
 bindSlider('swp_years','swp_years_txt', v=>v+' yrs', calcSWP);
 
-bindSlider('loan_amt','loan_amt_txt', v=>fmtMoney(v), calcLoan);
-bindSlider('loan_rate','loan_rate_txt', v=>v+' %', calcLoan);
-bindSlider('loan_years','loan_years_txt', v=>v+' yrs', calcLoan);
+function calcLoanAndPrepay(){ calcLoan(); calcLoanPrepay(); }
+bindSlider('loan_amt','loan_amt_txt', v=>fmtMoney(v), calcLoanAndPrepay);
+bindSlider('loan_rate','loan_rate_txt', v=>v+' %', calcLoanAndPrepay);
+bindSlider('loan_years','loan_years_txt', v=>v+' yrs', calcLoanAndPrepay);
+bindSlider('lp_amt','lp_amt_txt', v=>fmtMoney(v), calcLoanPrepay);
+bindSlider('lp_after','lp_after_txt', v=>v+' yrs', calcLoanPrepay);
+
+document.querySelectorAll('#loan_subtab_toggle .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#loan_subtab_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const isPrepay = btn.dataset.v==='prepay';
+    document.getElementById('loan_emi_panel').classList.toggle('hidden', isPrepay);
+    document.getElementById('loan_prepay_panel').classList.toggle('hidden', !isPrepay);
+    if(isPrepay) calcLoanPrepay();
+  });
+});
+document.querySelectorAll('#lp_mode_toggle .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#lp_mode_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    loanPrepayMode = btn.dataset.v;
+    calcLoanPrepay();
+  });
+});
 
 bindSlider('epf_basic','epf_basic_txt', v=>fmtMoney(v), calcEPF);
 bindSlider('epf_ee_pct','epf_ee_pct_txt', v=>v+' %', calcEPF);
@@ -1558,7 +1676,7 @@ function makeEditable(textId, sliderId, parseFn, onChange){
  'fd_amt','fd_rate','fd_years','rd_amt','rd_rate','rd_years',
  'ppf_amt','ppf_rate','ppf_years','ppf_existing',
  'swp_corpus','swp_wd','swp_rate','swp_years',
- 'loan_amt','loan_rate','loan_years',
+ 'loan_amt','loan_rate','loan_years','lp_amt','lp_after',
  'epf_basic','epf_ee_pct','epf_er_pct','epf_existing','epf_rate','epf_years',
  'nps_amt','nps_rate','nps_years','nps_existing','nps_annuity_rate',
  'tax_basic','tax_hra','tax_other','tax_pf_pct','tax_rent','tax_80c','tax_nps','tax_otherded'].forEach(base=>{
