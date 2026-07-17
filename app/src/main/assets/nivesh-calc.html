@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nivesh Calc — Finance Calculators</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230F1B2D'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='%23C9A227' font-family='Georgia'%3E₹%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F1B2D;
+    --navy-soft:#16233A;
+    --paper:#F7F4EC;
+    --paper-card:#FFFFFF;
+    --gold:#B8873B;
+    --gold-bright:#D9A94A;
+    --teal:#1E7F6E;
+    --coral:#C1453D;
+    --ink:#1A1F2B;
+    --muted:#6B7280;
+    --line:#E7E1D2;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-tap-highlight-color:transparent;
+    overscroll-behavior-y:none;
+    padding-bottom:78px;
+  }
+  h1,h2,h3,.display{font-family:'Fraunces',serif;}
+  button{font-family:inherit;}
+
+  /* ---------- Header ---------- */
+  header.top{
+    background:var(--navy);
+    color:#EDE7D6;
+    padding:22px 20px 20px;
+    position:sticky; top:0; z-index:30;
+    box-shadow:0 6px 18px rgba(15,27,45,0.18);
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .coin{
+    width:34px;height:34px;border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, var(--gold-bright), var(--gold) 60%, #8a6528 100%);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; color:var(--navy); font-size:18px;
+    flex-shrink:0;
+  }
+  .brand-text .title{font-size:20px;font-weight:600;letter-spacing:0.2px;line-height:1.1;}
+  .brand-text .sub{font-size:11px;color:#A9B3C4;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+  .screen-label{margin-top:14px;font-size:26px;font-weight:600;}
+  .screen-sub{font-size:13px;color:#B7BFCC;margin-top:2px;}
+
+  /* ---------- Home grid ---------- */
+  main{padding:18px 16px 24px;max-width:520px;margin:0 auto;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px;}
+  .calc-card{
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px 14px;
+    text-align:left;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .calc-card:active{transform:scale(0.97);}
+  .calc-card .icon{width:30px;height:30px;margin-bottom:10px;color:var(--gold);}
+  .calc-card .name{font-weight:600;font-size:15px;color:var(--ink);}
+  .calc-card .desc{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.35;}
+
+  .section-eyebrow{
+    font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);
+    font-weight:600;margin:22px 0 8px;
+  }
+
+  /* ---------- Calculator screen ---------- */
+  .field{margin-bottom:20px;}
+  .field-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+  .field-label{font-size:13.5px;color:var(--muted);font-weight:500;}
+  .field-value{
+    font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--ink);
+    background:none;border:none;text-align:right;width:130px;
+  }
+  .field-value:focus{outline:none;color:var(--gold);}
+  input[type=range]{
+    -webkit-appearance:none;width:100%;height:6px;border-radius:4px;
+    background:var(--line);outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+    background:var(--gold); border:3px solid var(--paper-card);
+    box-shadow:0 1px 4px rgba(0,0,0,0.3); cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:22px;height:22px;border-radius:50%;background:var(--gold);
+    border:3px solid var(--paper-card); cursor:pointer;
+  }
+  .toggle-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+  .toggle-btn{
+    flex:1; min-width:70px; padding:9px 10px; border-radius:10px; border:1px solid var(--line);
+    background:var(--paper-card); font-size:12.5px; font-weight:600; color:var(--muted); text-align:center;
+  }
+  .toggle-btn.active{background:var(--navy);color:#EDE7D6;border-color:var(--navy);}
+
+  /* ---------- Result panel ---------- */
+  .result-panel{
+    background:var(--navy);
+    border-radius:20px;
+    padding:24px 20px 20px;
+    margin-top:26px;
+    color:#EDE7D6;
+    position:relative;
+    overflow:hidden;
+  }
+  .result-panel::after{
+    content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+    background:radial-gradient(circle, rgba(217,169,74,0.18), transparent 70%);
+  }
+  .result-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#A9B3C4;}
+  .result-figure{font-family:'Fraunces',serif;font-size:36px;font-weight:600;margin-top:6px;color:var(--gold-bright);}
+  .result-sub{font-size:12.5px;color:#B7BFCC;margin-top:4px;}
+
+  .bar-wrap{margin-top:20px;}
+  .bar{display:flex;height:14px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.08);}
+  .bar .seg{height:100%;transition:width .6s ease;}
+  .seg.invested{background:#5F7290;}
+  .seg.growth{background:var(--gold);}
+  .seg.interest{background:var(--coral);}
+  .legend{display:flex;gap:16px;margin-top:10px;font-size:11.5px;color:#B7BFCC;flex-wrap:wrap;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+
+  .breakdown-rows{margin-top:18px;border-top:1px solid rgba(255,255,255,0.12);padding-top:14px;}
+  .brow{display:flex;justify-content:space-between;padding:6px 0;font-size:13.5px;}
+  .brow .k{color:#B7BFCC;}
+  .brow .v{font-weight:600;}
+
+  .note{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.5;}
+
+  /* ---------- Bottom nav ---------- */
+  nav.bottom{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    background:var(--paper-card);
+    border-top:1px solid var(--line);
+    display:flex; justify-content:space-around;
+    padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+  }
+  nav.bottom button{
+    background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:10.5px;color:var(--muted);font-weight:600;padding:4px 6px;flex:1;
+  }
+  nav.bottom button.active{color:var(--gold);}
+  nav.bottom svg{width:20px;height:20px;}
+
+  .back-btn{
+    display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:#A9B3C4;
+    font-size:12.5px;font-weight:600;margin-bottom:4px;padding:0;
+  }
+
+  /* ---------- Currency & Gold tools ---------- */
+  .currency-row{
+    display:flex;align-items:center;gap:10px;background:var(--paper-card);
+    border:1px solid var(--line);border-radius:14px;padding:6px 14px;
+  }
+  .currency-row .field-value{width:auto;flex:1;text-align:left;}
+  .currency-select{
+    border:none;background:none;font-family:inherit;font-weight:600;font-size:14px;
+    color:var(--ink);padding:10px 0;
+  }
+  .swap-btn{
+    display:flex;align-items:center;justify-content:center;margin:8px auto;width:38px;height:38px;
+    border-radius:50%;border:1px solid var(--line);background:var(--paper-card);color:var(--gold);
+    font-size:17px;line-height:1;
+  }
+  .gold-card{
+    background:var(--paper-card);border:1px solid var(--line);border-radius:16px;
+    padding:16px 18px;margin-bottom:14px;
+  }
+  .gold-card-title{font-family:'Fraunces',serif;font-weight:600;font-size:16px;margin-bottom:8px;}
+  .refresh-btn{
+    width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);
+    background:var(--paper-card);color:var(--gold);font-weight:600;font-size:13px;margin-top:12px;
+  }
+  .refresh-btn:active{transform:scale(0.98);}
+
+  /* ---------- Tax calculator ---------- */
+  .brow .v.winner{color:var(--gold-bright);}
+  .compare-row{display:flex;gap:10px;margin-top:14px;}
+  .compare-card{
+    flex:1;background:rgba(255,255,255,0.06);border-radius:12px;padding:10px 12px;text-align:center;
+  }
+  .compare-card.winner{background:rgba(217,169,74,0.16);border:1px solid var(--gold);}
+  .compare-card .cc-label{font-size:10.5px;color:#B7BFCC;text-transform:uppercase;letter-spacing:0.8px;}
+  .compare-card .cc-value{font-family:'Fraunces',serif;font-weight:600;font-size:16px;margin-top:4px;color:#EDE7D6;}
+  .compare-card.winner .cc-value{color:var(--gold-bright);}
+  .disclaimer-box{
+    background:#FBF3E3;border:1px solid var(--gold);border-radius:12px;padding:12px 14px;
+    font-size:11.5px;color:#5A4620;line-height:1.5;margin:0 0 18px;
+  }
+  .disclaimer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;}
+  .disclaimer-toggle{
+    flex-shrink:0;width:22px;height:22px;border-radius:50%;border:1px solid var(--gold);
+    background:none;color:#5A4620;font-size:15px;line-height:1;font-weight:700;
+  }
+  .disclaimer-body{margin-top:8px;}
+  .disclaimer-body.hidden{display:none;}
+
+  /* ---------- Take-home highlight ---------- */
+  .takehome-card{
+    background:linear-gradient(135deg, rgba(217,169,74,0.20), rgba(217,169,74,0.06));
+    border:1px solid var(--gold);border-radius:14px;padding:14px 16px;margin-top:18px;text-align:center;
+  }
+  .takehome-card .th-label{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#B7BFCC;}
+  .takehome-card .th-value{font-family:'Fraunces',serif;font-weight:700;font-size:28px;color:var(--gold-bright);margin-top:4px;}
+  .takehome-card .th-sub{font-size:11.5px;color:#B7BFCC;margin-top:3px;}
+
+  .hidden{display:none !important;}
+
+  @media (prefers-reduced-motion: reduce){
+    .seg{transition:none;}
+    .calc-card{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="coin">₹</div>
+    <div class="brand-text">
+      <div class="title">Nivesh Calc</div>
+      <div class="sub">Money math, made visual</div>
+    </div>
+  </div>
+  <div id="headerScreenBlock" class="hidden">
+    <button class="back-btn" onclick="goHome()">&larr; All calculators</button>
+    <div class="screen-label" id="screenTitle"></div>
+    <div class="screen-sub" id="screenSub"></div>
+  </div>
+</header>
+
+<main>
+  <!-- HOME -->
+  <div id="home">
+    <div class="screen-label" style="color:var(--ink);font-size:22px;">Pick a calculator</div>
+    <div class="screen-sub" style="color:var(--muted);">Calculators, plus live currency &amp; gold rates</div>
+
+    <div class="section-eyebrow">Building wealth</div>
+    <div class="grid">
+      <div class="calc-card" onclick="openCalc('sip')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l5-5 4 3 8-9"/><path d="M15 6h5v5"/></svg>
+        <div class="name">SIP</div>
+        <div class="desc">Monthly investing, compounded</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('stepup')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V14M10 20V10M16 20V6M22 20V3"/></svg>
+        <div class="name">Step-up SIP</div>
+        <div class="desc">SIP that grows every year</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('lumpsum')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <div class="name">Lumpsum</div>
+        <div class="desc">One-time investment growth</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('fd')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+        <div class="name">Fixed Deposit</div>
+        <div class="desc">Bank FD maturity value</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('rd')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2"/><circle cx="12" cy="12" r="5"/></svg>
+        <div class="name">Recurring Deposit</div>
+        <div class="desc">Monthly bank RD maturity</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('epf')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z"/></svg>
+        <div class="name">EPF</div>
+        <div class="desc">Provident fund at retirement</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('nps')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+        <div class="name">NPS</div>
+        <div class="desc">National Pension System corpus</div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">Drawing income</div>
+    <div class="grid">
+      <div class="calc-card" onclick="openCalc('swp')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18M14 6l-8 6 8 6"/></svg>
+        <div class="name">SWP</div>
+        <div class="desc">Withdraw monthly from a corpus</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('loan')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
+        <div class="name">Loan / EMI</div>
+        <div class="desc">Monthly instalment on a loan</div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">Tax planning</div>
+    <div class="grid">
+      <div class="calc-card" onclick="openCalc('tax')" style="grid-column:1 / -1;">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 16l2-6 2 6M9.5 14h3"/></svg>
+        <div class="name">Know My Tax</div>
+        <div class="desc">Estimate income tax under New vs Old regime, from your salary breakup</div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">Live market tools</div>
+    <div class="grid">
+      <div class="calc-card" onclick="openCalc('currency')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9 15h4a2 2 0 1 0 0-4H9m0 0h4a2 2 0 1 0 0-4H9M9 7v10"/></svg>
+        <div class="name">Currency</div>
+        <div class="desc">Live exchange rate converter</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('gold')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8.5 12h7M12 8.5v7"/></svg>
+        <div class="name">Gold Price</div>
+        <div class="desc">India, UAE &amp; USA, live</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIP -->
+  <div id="sip" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Monthly investment</span>
+        <input class="field-value" id="sip_amt_txt" value="₹ 15,000"></div>
+      <input type="range" id="sip_amt" min="500" max="200000" step="500" value="15000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Expected annual return</span>
+        <input class="field-value" id="sip_rate_txt" value="12 %"></div>
+      <input type="range" id="sip_rate" min="1" max="30" step="0.5" value="12">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Time period</span>
+        <input class="field-value" id="sip_years_txt" value="15 yrs"></div>
+      <input type="range" id="sip_years" min="1" max="40" step="1" value="15">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Already invested (optional)</span>
+        <input class="field-value" id="sip_existing_txt" value="₹ 0"></div>
+      <input type="range" id="sip_existing" min="0" max="10000000" step="5000" value="0">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Maturity value</div>
+      <div class="result-figure" id="sip_result">₹0</div>
+      <div class="result-sub" id="sip_resultsub"></div>
+      <div class="bar-wrap">
+        <div class="bar"><div class="seg invested" id="sip_bar_invested"></div><div class="seg growth" id="sip_bar_growth"></div></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#5F7290"></i>Invested</span>
+          <span><i class="dot" style="background:var(--gold)"></i>Growth</span>
+        </div>
+      </div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Total invested</span><span class="v" id="sip_invested"></span></div>
+        <div class="brow"><span class="k">Wealth gained</span><span class="v" id="sip_gain"></span></div>
+        <div class="brow hidden" id="sip_existing_row"><span class="k">Existing amount grows to</span><span class="v" id="sip_existing_grown"></span></div>
+      </div>
+    </div>
+    <div class="note">Assumes monthly compounding, returns applied at the end of each month. Actual mutual fund returns are never guaranteed. If you already have money invested, add it above — it's assumed to earn the same return as your future SIP.</div>
+  </div>
+
+  <!-- STEP UP SIP -->
+  <div id="stepup" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Starting monthly SIP</span>
+        <input class="field-value" id="su_amt_txt" value="₹ 15,000"></div>
+      <input type="range" id="su_amt" min="500" max="200000" step="500" value="15000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Annual step-up</span>
+        <input class="field-value" id="su_step_txt" value="10 %"></div>
+      <input type="range" id="su_step" min="0" max="30" step="1" value="10">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Expected annual return</span>
+        <input class="field-value" id="su_rate_txt" value="12 %"></div>
+      <input type="range" id="su_rate" min="1" max="30" step="0.5" value="12">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Time period</span>
+        <input class="field-value" id="su_years_txt" value="15 yrs"></div>
+      <input type="range" id="su_years" min="1" max="40" step="1" value="15">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Already invested (optional)</span>
+        <input class="field-value" id="su_existing_txt" value="₹ 0"></div>
+      <input type="range" id="su_existing" min="0" max="10000000" step="5000" value="0">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Maturity value</div>
+      <div class="result-figure" id="su_result">₹0</div>
+      <div class="result-sub" id="su_resultsub"></div>
+      <div class="bar-wrap">
+        <div class="bar"><div class="seg invested" id="su_bar_invested"></div><div class="seg growth" id="su_bar_growth"></div></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#5F7290"></i>Invested</span>
+          <span><i class="dot" style="background:var(--gold)"></i>Growth</span>
+        </div>
+      </div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Total invested</span><span class="v" id="su_invested"></span></div>
+        <div class="brow"><span class="k">Wealth gained</span><span class="v" id="su_gain"></span></div>
+        <div class="brow"><span class="k">Final year's SIP</span><span class="v" id="su_finalsip"></span></div>
+      </div>
+    </div>
+    <div class="note">Step-up applies once a year, on the SIP amount from the previous year. If you already have money invested, add it above — it's assumed to earn the same return as your SIP.</div>
+  </div>
+
+  <!-- LUMPSUM -->
+  <div id="lumpsum" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Investment amount</span>
+        <input class="field-value" id="ls_amt_txt" value="₹ 1,00,000"></div>
+      <input type="range" id="ls_amt" min="1000" max="5000000" step="1000" value="100000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Expected annual return</span>
+        <input class="field-value" id="ls_rate_txt" value="12 %"></div>
+      <input type="range" id="ls_rate" min="1" max="30" step="0.5" value="12">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Time period</span>
+        <input class="field-value" id="ls_years_txt" value="15 yrs"></div>
+      <input type="range" id="ls_years" min="1" max="40" step="1" value="15">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Maturity value</div>
+      <div class="result-figure" id="ls_result">₹0</div>
+      <div class="bar-wrap">
+        <div class="bar"><div class="seg invested" id="ls_bar_invested"></div><div class="seg growth" id="ls_bar_growth"></div></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#5F7290"></i>Invested</span>
+          <span><i class="dot" style="background:var(--gold)"></i>Growth</span>
+        </div>
+      </div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Amount invested</span><span class="v" id="ls_invested"></span></div>
+        <div class="brow"><span class="k">Wealth gained</span><span class="v" id="ls_gain"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FD -->
+  <div id="fd" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Deposit amount</span>
+        <input class="field-value" id="fd_amt_txt" value="₹ 1,00,000"></div>
+      <input type="range" id="fd_amt" min="1000" max="5000000" step="1000" value="100000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Interest rate</span>
+        <input class="field-value" id="fd_rate_txt" value="7 %"></div>
+      <input type="range" id="fd_rate" min="1" max="12" step="0.1" value="7">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Tenure</span>
+        <input class="field-value" id="fd_years_txt" value="5 yrs"></div>
+      <input type="range" id="fd_years" min="1" max="10" step="1" value="5">
+    </div>
+    <div class="field">
+      <span class="field-label">Compounding frequency</span>
+      <div class="toggle-row" id="fd_freq_toggle">
+        <div class="toggle-btn" data-v="4">Quarterly</div>
+        <div class="toggle-btn" data-v="12">Monthly</div>
+        <div class="toggle-btn" data-v="1">Yearly</div>
+      </div>
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Maturity value</div>
+      <div class="result-figure" id="fd_result">₹0</div>
+      <div class="bar-wrap">
+        <div class="bar"><div class="seg invested" id="fd_bar_invested"></div><div class="seg growth" id="fd_bar_growth"></div></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#5F7290"></i>Deposit</span>
+          <span><i class="dot" style="background:var(--gold)"></i>Interest</span>
+        </div>
+      </div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Deposit</span><span class="v" id="fd_invested"></span></div>
+        <div class="brow"><span class="k">Interest earned</span><span class="v" id="fd_gain"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RD -->
+  <div id="rd" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Monthly deposit</span>
+        <input class="field-value" id="rd_amt_txt" value="₹ 5,000"></div>
+      <input type="range" id="rd_amt" min="500" max="200000" step="500" value="5000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Interest rate</span>
+        <input class="field-value" id="rd_rate_txt" value="7 %"></div>
+      <input type="range" id="rd_rate" min="1" max="12" step="0.1" value="7">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Tenure</span>
+        <input class="field-value" id="rd_years_txt" value="3 yrs"></div>
+      <input type="range" id="rd_years" min="1" max="10" step="1" value="3">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Maturity value</div>
+      <div class="result-figure" id="rd_result">₹0</div>
+      <div class="bar-wrap">
+        <div class="bar"><div class="seg invested" id="rd_bar_invested"></div><div class="seg growth" id="rd_bar_growth"></div></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#5F7290"></i>Deposited</span>
+          <span><i class="dot" style="background:var(--gold)"></i>Interest</span>
+        </div>
+      </div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Total deposited</span><span class="v" id="rd_invested"></span></div>
+        <div class="brow"><span class="k">Interest earned</span><span class="v" id="rd_gain"></span></div>
+      </div>
+    </div>
+    <div class="note">Uses quarterly compounding, the convention most Indian banks apply to RDs.</div>
+  </div>
+
+  <!-- SWP -->
+  <div id="swp" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Starting corpus</span>
+        <input class="field-value" id="swp_corpus_txt" value="₹ 30,00,000"></div>
+      <input type="range" id="swp_corpus" min="100000" max="20000000" step="50000" value="3000000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Monthly withdrawal</span>
+        <input class="field-value" id="swp_wd_txt" value="₹ 25,000"></div>
+      <input type="range" id="swp_wd" min="1000" max="500000" step="1000" value="25000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Expected annual return</span>
+        <input class="field-value" id="swp_rate_txt" value="8 %"></div>
+      <input type="range" id="swp_rate" min="1" max="20" step="0.5" value="8">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Withdrawal period</span>
+        <input class="field-value" id="swp_years_txt" value="20 yrs"></div>
+      <input type="range" id="swp_years" min="1" max="40" step="1" value="20">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label" id="swp_status_label">Corpus after period</div>
+      <div class="result-figure" id="swp_result">₹0</div>
+      <div class="result-sub" id="swp_resultsub"></div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Total withdrawn</span><span class="v" id="swp_withdrawn"></span></div>
+        <div class="brow"><span class="k">Growth earned</span><span class="v" id="swp_growth"></span></div>
+      </div>
+    </div>
+    <div class="note">If withdrawals outpace growth, the corpus can run out before the period ends — this is flagged above.</div>
+  </div>
+
+  <!-- LOAN / EMI -->
+  <div id="loan" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Loan amount</span>
+        <input class="field-value" id="loan_amt_txt" value="₹ 40,00,000"></div>
+      <input type="range" id="loan_amt" min="50000" max="20000000" step="50000" value="4000000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Interest rate</span>
+        <input class="field-value" id="loan_rate_txt" value="8.5 %"></div>
+      <input type="range" id="loan_rate" min="1" max="20" step="0.1" value="8.5">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Tenure</span>
+        <input class="field-value" id="loan_years_txt" value="20 yrs"></div>
+      <input type="range" id="loan_years" min="1" max="30" step="1" value="20">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Monthly EMI</div>
+      <div class="result-figure" id="loan_result">₹0</div>
+      <div class="bar-wrap">
+        <div class="bar"><div class="seg invested" id="loan_bar_principal"></div><div class="seg interest" id="loan_bar_interest"></div></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#5F7290"></i>Principal</span>
+          <span><i class="dot" style="background:var(--coral)"></i>Interest</span>
+        </div>
+      </div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Total interest payable</span><span class="v" id="loan_interest"></span></div>
+        <div class="brow"><span class="k">Total amount payable</span><span class="v" id="loan_total"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EPF -->
+  <div id="epf" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Basic + DA (monthly)</span>
+        <input class="field-value" id="epf_basic_txt" value="₹ 25,000"></div>
+      <input type="range" id="epf_basic" min="5000" max="200000" step="500" value="25000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Your (employee) contribution</span>
+        <input class="field-value" id="epf_ee_pct_txt" value="12 %"></div>
+      <input type="range" id="epf_ee_pct" min="1" max="12" step="0.5" value="12">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Employer's EPF share</span>
+        <input class="field-value" id="epf_er_pct_txt" value="3.67 %"></div>
+      <input type="range" id="epf_er_pct" min="1" max="12" step="0.01" value="3.67">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Years to retirement</span>
+        <input class="field-value" id="epf_years_txt" value="25 yrs"></div>
+      <input type="range" id="epf_years" min="1" max="40" step="1" value="25">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Annual EPF interest rate</span>
+        <input class="field-value" id="epf_rate_txt" value="8.25 %"></div>
+      <input type="range" id="epf_rate" min="1" max="12" step="0.05" value="8.25">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Current EPF balance (optional)</span>
+        <input class="field-value" id="epf_existing_txt" value="₹ 0"></div>
+      <input type="range" id="epf_existing" min="0" max="10000000" step="5000" value="0">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Estimated EPF corpus</div>
+      <div class="result-figure" id="epf_result">₹0</div>
+      <div class="result-sub" id="epf_resultsub"></div>
+      <div class="bar-wrap">
+        <div class="bar"><div class="seg invested" id="epf_bar_invested"></div><div class="seg growth" id="epf_bar_growth"></div></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#5F7290"></i>Contributed</span>
+          <span><i class="dot" style="background:var(--gold)"></i>Interest</span>
+        </div>
+      </div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Total contributed</span><span class="v" id="epf_invested"></span></div>
+        <div class="brow"><span class="k">Interest earned</span><span class="v" id="epf_gain"></span></div>
+        <div class="brow hidden" id="epf_existing_row"><span class="k">Existing balance grows to</span><span class="v" id="epf_existing_grown"></span></div>
+      </div>
+    </div>
+    <div class="note">Employer's 12% splits into ~8.33% (capped) to the EPS pension scheme and ~3.67% to EPF — only the EPF share is included here. EPFO revises the interest rate every year and your salary will likely rise over time, so treat this as a rough estimate, not a guarantee.</div>
+  </div>
+
+  <!-- NPS -->
+  <div id="nps" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Monthly contribution</span>
+        <input class="field-value" id="nps_amt_txt" value="₹ 5,000"></div>
+      <input type="range" id="nps_amt" min="500" max="100000" step="500" value="5000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Expected annual return</span>
+        <input class="field-value" id="nps_rate_txt" value="10 %"></div>
+      <input type="range" id="nps_rate" min="1" max="15" step="0.5" value="10">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Years to retirement</span>
+        <input class="field-value" id="nps_years_txt" value="25 yrs"></div>
+      <input type="range" id="nps_years" min="1" max="40" step="1" value="25">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Current NPS balance (optional)</span>
+        <input class="field-value" id="nps_existing_txt" value="₹ 0"></div>
+      <input type="range" id="nps_existing" min="0" max="10000000" step="5000" value="0">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Assumed annuity rate</span>
+        <input class="field-value" id="nps_annuity_rate_txt" value="6 %"></div>
+      <input type="range" id="nps_annuity_rate" min="3" max="9" step="0.25" value="6">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Estimated corpus at retirement</div>
+      <div class="result-figure" id="nps_result">₹0</div>
+      <div class="result-sub" id="nps_resultsub"></div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Tax-free lump sum (60%)</span><span class="v" id="nps_lumpsum"></span></div>
+        <div class="brow"><span class="k">Used to buy annuity (40%)</span><span class="v" id="nps_annuity"></span></div>
+        <div class="brow"><span class="k">Estimated monthly pension</span><span class="v" id="nps_pension"></span></div>
+        <div class="brow hidden" id="nps_existing_row"><span class="k">Existing balance grows to</span><span class="v" id="nps_existing_grown"></span></div>
+      </div>
+    </div>
+    <div class="note">NPS returns are market-linked, never guaranteed. At least 40% of the corpus must buy an annuity at retirement — the actual pension depends on the annuity provider and plan you pick then; the annuity rate above is just an assumption you can adjust.</div>
+  </div>
+
+  <!-- KNOW MY TAX -->
+  <div id="tax" class="calc-screen hidden">
+    <div class="disclaimer-box">
+      <div class="disclaimer-head" onclick="toggleTaxDisclaimer()">
+        <strong>This is a calculator, not tax advice.</strong>
+        <button class="disclaimer-toggle" id="tax_disclaimer_toggle" type="button" aria-label="Show or hide disclaimer">&minus;</button>
+      </div>
+      <div class="disclaimer-body" id="tax_disclaimer_body">It's an illustrative estimate for FY 2026-27 (AY 2027-28) using standard slab rules — it doesn't account for every deduction, other income, or your specific situation. Verify with the Income Tax Department or a qualified CA before filing or making decisions.</div>
+    </div>
+
+    <div class="section-eyebrow" style="margin-top:0;">Your salary (annual)</div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Basic salary</span>
+        <input class="field-value" id="tax_basic_txt" value="₹ 6,00,000"></div>
+      <input type="range" id="tax_basic" min="100000" max="5000000" step="10000" value="600000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">HRA received</span>
+        <input class="field-value" id="tax_hra_txt" value="₹ 2,40,000"></div>
+      <input type="range" id="tax_hra" min="0" max="3000000" step="10000" value="240000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Other taxable allowances / bonus</span>
+        <input class="field-value" id="tax_other_txt" value="₹ 1,80,000"></div>
+      <input type="range" id="tax_other" min="0" max="5000000" step="10000" value="180000">
+    </div>
+    <div class="note" style="margin-top:-6px;">Use your payslip or CTC letter: Basic + HRA + all other taxable allowances/bonus. Skip employer PF, gratuity, and insurance — those aren't taxed as salary.</div>
+
+    <div class="section-eyebrow">Provident fund (EPF)</div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Employee PF contribution</span>
+        <input class="field-value" id="tax_pf_pct_txt" value="12 %"></div>
+      <input type="range" id="tax_pf_pct" min="0" max="12" step="0.5" value="12">
+    </div>
+    <div class="note" style="margin-top:-6px;" id="tax_pf_note">Deducted from your pay into your own EPF account each month — it's not tax, but it does reduce your take-home. It also counts toward your ₹1.5L Section 80C limit under the Old Regime.</div>
+
+    <div class="section-eyebrow">Rent &amp; city (for HRA exemption, Old Regime only)</div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Rent paid annually</span>
+        <input class="field-value" id="tax_rent_txt" value="₹ 1,80,000"></div>
+      <input type="range" id="tax_rent" min="0" max="3000000" step="10000" value="180000">
+    </div>
+    <div class="field">
+      <span class="field-label">City type</span>
+      <div class="toggle-row" id="tax_city_toggle">
+        <div class="toggle-btn active" data-v="metro">Metro (8 cities)</div>
+        <div class="toggle-btn" data-v="other">Other</div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">Deductions (Old Regime only)</div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Section 80C (PF, ELSS, insurance…)</span>
+        <input class="field-value" id="tax_80c_txt" value="₹ 0"></div>
+      <input type="range" id="tax_80c" min="0" max="150000" step="5000" value="0">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">NPS 80CCD(1B), extra</span>
+        <input class="field-value" id="tax_nps_txt" value="₹ 0"></div>
+      <input type="range" id="tax_nps" min="0" max="50000" step="5000" value="0">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Other (80D, home loan interest…)</span>
+        <input class="field-value" id="tax_otherded_txt" value="₹ 0"></div>
+      <input type="range" id="tax_otherded" min="0" max="500000" step="5000" value="0">
+    </div>
+
+    <div class="section-eyebrow">Your age</div>
+    <div class="field">
+      <div class="toggle-row" id="tax_age_toggle">
+        <div class="toggle-btn active" data-v="below60">Below 60</div>
+        <div class="toggle-btn" data-v="senior">60–80</div>
+        <div class="toggle-btn" data-v="supersenior">Above 80</div>
+      </div>
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label" id="tax_result_label">Estimated tax — New Regime</div>
+      <div class="result-figure" id="tax_result">₹0</div>
+      <div class="result-sub" id="tax_resultsub"></div>
+      <div class="compare-row">
+        <div class="compare-card" id="tax_card_new">
+          <div class="cc-label">New Regime</div>
+          <div class="cc-value" id="tax_new_total">₹0</div>
+        </div>
+        <div class="compare-card" id="tax_card_old">
+          <div class="cc-label">Old Regime</div>
+          <div class="cc-value" id="tax_old_total">₹0</div>
+        </div>
+      </div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Gross salary</span><span class="v" id="tax_gross"></span></div>
+        <div class="brow"><span class="k">Employee PF (to your EPF account)</span><span class="v" id="tax_pf_amount"></span></div>
+        <div class="brow hidden" id="tax_hraexempt_row"><span class="k">HRA exemption</span><span class="v" id="tax_hraexempt"></span></div>
+        <div class="brow"><span class="k">Taxable income</span><span class="v" id="tax_taxable"></span></div>
+        <div class="brow"><span class="k">Income tax</span><span class="v" id="tax_incometax"></span></div>
+        <div class="brow hidden" id="tax_surcharge_row"><span class="k">Surcharge</span><span class="v" id="tax_surcharge"></span></div>
+        <div class="brow"><span class="k">Health &amp; education cess (4%)</span><span class="v" id="tax_cess"></span></div>
+        <div class="brow"><span class="k">Total tax payable</span><span class="v" id="tax_total"></span></div>
+      </div>
+      <div class="takehome-card">
+        <div class="th-label">Take-home pay, per month</div>
+        <div class="th-value" id="tax_takehome_monthly">₹0</div>
+        <div class="th-sub">after tax &amp; PF deduction</div>
+      </div>
+    </div>
+    <div class="note">Simplifications: assumes a single resident individual with only salary income, no marginal relief on surcharge, and HRA calculated on Basic salary only (add Dearness Allowance to Basic above if you receive it). Tax laws change every Union Budget — treat this as a starting estimate.</div>
+  </div>
+
+  <!-- CURRENCY CONVERTER -->
+  <div id="currency" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">You have</span></div>
+      <div class="currency-row">
+        <input class="field-value" id="cur_amt_txt" value="1" inputmode="decimal">
+        <select id="cur_from" class="currency-select"></select>
+      </div>
+    </div>
+    <button class="swap-btn" id="cur_swap" aria-label="Swap currencies" type="button">&#8645;</button>
+    <div class="field">
+      <div class="field-top"><span class="field-label">You get</span></div>
+      <div class="currency-row">
+        <div class="field-value" id="cur_result">&mdash;</div>
+        <select id="cur_to" class="currency-select"></select>
+      </div>
+    </div>
+    <div class="note" id="cur_status">Fetching live rates&hellip;</div>
+    <button class="refresh-btn" id="cur_refresh" type="button">Refresh rates</button>
+  </div>
+
+  <!-- GOLD PRICE -->
+  <div id="gold" class="calc-screen hidden">
+    <div class="note" style="margin-top:0;margin-bottom:16px;">Reference spot gold price, converted to local currency. Retail store prices differ due to import duty, GST/VAT, and making charges.</div>
+
+    <div class="gold-card">
+      <div class="gold-card-title">India</div>
+      <div class="brow"><span class="k">24K, per gram</span><span class="v" id="gold_in_24">&mdash;</span></div>
+      <div class="brow"><span class="k">22K, per gram</span><span class="v" id="gold_in_22">&mdash;</span></div>
+      <div class="brow"><span class="k">24K, per 10 g</span><span class="v" id="gold_in_24_10">&mdash;</span></div>
+    </div>
+    <div class="gold-card">
+      <div class="gold-card-title">UAE</div>
+      <div class="brow"><span class="k">24K, per gram</span><span class="v" id="gold_ae_24">&mdash;</span></div>
+      <div class="brow"><span class="k">22K, per gram</span><span class="v" id="gold_ae_22">&mdash;</span></div>
+    </div>
+    <div class="gold-card">
+      <div class="gold-card-title">USA</div>
+      <div class="brow"><span class="k">Per troy ounce</span><span class="v" id="gold_us_oz">&mdash;</span></div>
+      <div class="brow"><span class="k">Per gram</span><span class="v" id="gold_us_g">&mdash;</span></div>
+    </div>
+
+    <div class="note" id="gold_status">Fetching live gold price&hellip;</div>
+    <button class="refresh-btn" id="gold_refresh" type="button">Refresh price</button>
+  </div>
+
+</main>
+
+<nav class="bottom" id="bottomNav">
+  <button class="active" data-t="home" onclick="goHome()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg>
+    Home
+  </button>
+  <button data-t="sip" onclick="openCalc('sip')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-5 4 3 8-9"/></svg>
+    SIP
+  </button>
+  <button data-t="loan" onclick="openCalc('loan')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
+    Loan
+  </button>
+  <button data-t="swp" onclick="openCalc('swp')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 6l-8 6 8 6"/></svg>
+    SWP
+  </button>
+</nav>
+
+<script>
+const INR = n => {
+  n = Math.round(n);
+  const neg = n < 0; n = Math.abs(n);
+  let s = n.toString();
+  let last3 = s.substring(s.length-3);
+  let other = s.substring(0, s.length-3);
+  if(other !== '') last3 = ',' + last3;
+  let formatted = other.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + last3;
+  return (neg?'-':'') + '₹' + formatted;
+};
+
+const titles = {
+  sip:['SIP Calculator','What a steady monthly habit builds into'],
+  stepup:['Step-up SIP','Increase your SIP each year, watch the gap widen'],
+  lumpsum:['Lumpsum Calculator','One deposit, compounding on its own'],
+  fd:['Fixed Deposit','Bank FD maturity value'],
+  rd:['Recurring Deposit','Monthly bank RD maturity'],
+  swp:['SWP Calculator','Draw an income, track what is left'],
+  loan:['Loan / EMI Calculator','Your monthly instalment, principal vs interest'],
+  epf:['EPF Calculator','Provident fund corpus at retirement'],
+  nps:['NPS Calculator','National Pension System corpus & pension'],
+  tax:['Know My Tax','New vs Old regime, estimated from your salary'],
+  currency:['Currency Converter','Live exchange rates'],
+  gold:['Gold Price','Spot rates across India, UAE & USA']
+};
+
+function goHome(){
+  document.getElementById('home').classList.remove('hidden');
+  document.querySelectorAll('.calc-screen').forEach(e=>e.classList.add('hidden'));
+  document.getElementById('headerScreenBlock').classList.add('hidden');
+  document.querySelectorAll('nav.bottom button').forEach(b=>b.classList.remove('active'));
+  document.querySelector('nav.bottom button[data-t="home"]').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function openCalc(id){
+  document.getElementById('home').classList.add('hidden');
+  document.querySelectorAll('.calc-screen').forEach(e=>e.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.getElementById('headerScreenBlock').classList.remove('hidden');
+  document.getElementById('screenTitle').textContent = titles[id][0];
+  document.getElementById('screenSub').textContent = titles[id][1];
+  document.querySelectorAll('nav.bottom button').forEach(b=>b.classList.remove('active'));
+  const navBtn = document.querySelector('nav.bottom button[data-t="'+id+'"]');
+  if(navBtn) navBtn.classList.add('active');
+  window.scrollTo(0,0);
+  recalcAll();
+  if(id==='currency') loadCurrencyScreen(false);
+  if(id==='gold') loadGoldScreen(false);
+}
+
+// ---- generic slider <-> text binder ----
+function bindSlider(sliderId, textId, formatFn, onChange){
+  const slider = document.getElementById(sliderId);
+  const text = document.getElementById(textId);
+  slider.addEventListener('input', ()=>{ text.value = formatFn(parseFloat(slider.value)); onChange(); });
+}
+
+// ================= SIP =================
+function calcSIP(){
+  const P = parseFloat(document.getElementById('sip_amt').value);
+  const annualRate = parseFloat(document.getElementById('sip_rate').value);
+  const years = parseFloat(document.getElementById('sip_years').value);
+  const existing = parseFloat(document.getElementById('sip_existing').value) || 0;
+  const r = annualRate/100/12;
+  const n = years*12;
+  const sipFv = r===0 ? P*n : P * ((Math.pow(1+r,n)-1)/r) * (1+r);
+  const existingFv = existing * Math.pow(1+r, n);
+  const fv = sipFv + existingFv;
+  const invested = P*n + existing;
+  const gain = fv - invested;
+  document.getElementById('sip_result').textContent = INR(fv);
+  document.getElementById('sip_resultsub').textContent = `after ${years} year${years>1?'s':''} of ₹${Math.round(P).toLocaleString('en-IN')}/month`;
+  document.getElementById('sip_invested').textContent = INR(invested);
+  document.getElementById('sip_gain').textContent = INR(gain);
+  const existingRow = document.getElementById('sip_existing_row');
+  if(existing > 0){
+    existingRow.classList.remove('hidden');
+    document.getElementById('sip_existing_grown').textContent = INR(existingFv);
+  } else {
+    existingRow.classList.add('hidden');
+  }
+  const investedPct = Math.max(2, Math.min(98,(invested/fv)*100));
+  document.getElementById('sip_bar_invested').style.width = investedPct+'%';
+  document.getElementById('sip_bar_growth').style.width = (100-investedPct)+'%';
+}
+
+// ================= STEP-UP SIP =================
+function calcStepUp(){
+  const P0 = parseFloat(document.getElementById('su_amt').value);
+  const step = parseFloat(document.getElementById('su_step').value)/100;
+  const annualRate = parseFloat(document.getElementById('su_rate').value);
+  const years = parseFloat(document.getElementById('su_years').value);
+  const existing = parseFloat(document.getElementById('su_existing').value) || 0;
+  const r = annualRate/100/12;
+  let balance = existing, invested = existing, sip = P0;
+  for(let y=0;y<years;y++){
+    for(let m=0;m<12;m++){
+      balance = (balance + sip) * (1+r);
+      invested += sip;
+    }
+    sip = sip*(1+step);
+  }
+  const gain = balance - invested;
+  document.getElementById('su_result').textContent = INR(balance);
+  document.getElementById('su_resultsub').textContent = `starting ₹${Math.round(P0).toLocaleString('en-IN')}/month, +${(step*100).toFixed(0)}% every year`;
+  document.getElementById('su_invested').textContent = INR(invested);
+  document.getElementById('su_gain').textContent = INR(gain);
+  document.getElementById('su_finalsip').textContent = INR(sip/(1+step));
+  const investedPct = Math.max(2, Math.min(98,(invested/balance)*100));
+  document.getElementById('su_bar_invested').style.width = investedPct+'%';
+  document.getElementById('su_bar_growth').style.width = (100-investedPct)+'%';
+}
+
+// ================= LUMPSUM =================
+function calcLumpsum(){
+  const P = parseFloat(document.getElementById('ls_amt').value);
+  const annualRate = parseFloat(document.getElementById('ls_rate').value);
+  const years = parseFloat(document.getElementById('ls_years').value);
+  const fv = P*Math.pow(1+annualRate/100, years);
+  const gain = fv - P;
+  document.getElementById('ls_result').textContent = INR(fv);
+  document.getElementById('ls_invested').textContent = INR(P);
+  document.getElementById('ls_gain').textContent = INR(gain);
+  const investedPct = Math.max(2, Math.min(98,(P/fv)*100));
+  document.getElementById('ls_bar_invested').style.width = investedPct+'%';
+  document.getElementById('ls_bar_growth').style.width = (100-investedPct)+'%';
+}
+
+// ================= FD =================
+let fdFreq = 4;
+function calcFD(){
+  const P = parseFloat(document.getElementById('fd_amt').value);
+  const annualRate = parseFloat(document.getElementById('fd_rate').value);
+  const years = parseFloat(document.getElementById('fd_years').value);
+  const n = fdFreq;
+  const fv = P*Math.pow(1 + (annualRate/100)/n, n*years);
+  const gain = fv - P;
+  document.getElementById('fd_result').textContent = INR(fv);
+  document.getElementById('fd_invested').textContent = INR(P);
+  document.getElementById('fd_gain').textContent = INR(gain);
+  const investedPct = Math.max(2, Math.min(98,(P/fv)*100));
+  document.getElementById('fd_bar_invested').style.width = investedPct+'%';
+  document.getElementById('fd_bar_growth').style.width = (100-investedPct)+'%';
+}
+
+// ================= RD =================
+function calcRD(){
+  const P = parseFloat(document.getElementById('rd_amt').value);
+  const annualRate = parseFloat(document.getElementById('rd_rate').value);
+  const years = parseFloat(document.getElementById('rd_years').value);
+  const n = years*12;
+  const i = annualRate/100/4; // quarterly rate
+  let fv = 0;
+  for(let m=1;m<=n;m++){
+    const monthsRemaining = n - m + 1;
+    const quartersRemaining = monthsRemaining/3;
+    fv += P*Math.pow(1+i, quartersRemaining);
+  }
+  const invested = P*n;
+  const gain = fv - invested;
+  document.getElementById('rd_result').textContent = INR(fv);
+  document.getElementById('rd_invested').textContent = INR(invested);
+  document.getElementById('rd_gain').textContent = INR(gain);
+  const investedPct = Math.max(2, Math.min(98,(invested/fv)*100));
+  document.getElementById('rd_bar_invested').style.width = investedPct+'%';
+  document.getElementById('rd_bar_growth').style.width = (100-investedPct)+'%';
+}
+
+// ================= SWP =================
+function calcSWP(){
+  const corpus0 = parseFloat(document.getElementById('swp_corpus').value);
+  const wd = parseFloat(document.getElementById('swp_wd').value);
+  const annualRate = parseFloat(document.getElementById('swp_rate').value);
+  const years = parseFloat(document.getElementById('swp_years').value);
+  const r = annualRate/100/12;
+  const n = years*12;
+  let balance = corpus0, totalWithdrawn = 0, depleted = false, depletedMonth = 0;
+  for(let m=1;m<=n;m++){
+    balance = balance*(1+r) - wd;
+    totalWithdrawn += wd;
+    if(balance <= 0 && !depleted){ depleted = true; depletedMonth = m; balance = 0; }
+    if(depleted) continue;
+  }
+  const growth = (balance>0? balance : 0) - corpus0 + Math.min(totalWithdrawn, depleted? wd*depletedMonth : totalWithdrawn);
+  document.getElementById('swp_result').textContent = INR(balance>0?balance:0);
+  document.getElementById('swp_withdrawn').textContent = INR(depleted? wd*depletedMonth : totalWithdrawn);
+  const growthEarned = (depleted? 0 : balance) + (depleted? wd*depletedMonth : totalWithdrawn) - corpus0;
+  document.getElementById('swp_growth').textContent = INR(growthEarned);
+  if(depleted){
+    document.getElementById('swp_status_label').textContent = 'Corpus runs out';
+    document.getElementById('swp_result').textContent = 'Month ' + depletedMonth;
+    document.getElementById('swp_resultsub').textContent = `≈ ${(depletedMonth/12).toFixed(1)} years in, at this withdrawal rate`;
+    document.getElementById('swp_result').style.color = 'var(--coral)';
+  } else {
+    document.getElementById('swp_status_label').textContent = 'Corpus remaining after period';
+    document.getElementById('swp_resultsub').textContent = `after ${years} years of ₹${Math.round(wd).toLocaleString('en-IN')}/month withdrawals`;
+    document.getElementById('swp_result').style.color = 'var(--gold-bright)';
+  }
+}
+
+// ================= LOAN / EMI =================
+function calcLoan(){
+  const P = parseFloat(document.getElementById('loan_amt').value);
+  const annualRate = parseFloat(document.getElementById('loan_rate').value);
+  const years = parseFloat(document.getElementById('loan_years').value);
+  const r = annualRate/100/12;
+  const n = years*12;
+  const emi = r===0 ? P/n : P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  const total = emi*n;
+  const interest = total - P;
+  document.getElementById('loan_result').textContent = INR(emi) + ' /mo';
+  document.getElementById('loan_interest').textContent = INR(interest);
+  document.getElementById('loan_total').textContent = INR(total);
+  const pPct = Math.max(2, Math.min(98,(P/total)*100));
+  document.getElementById('loan_bar_principal').style.width = pPct+'%';
+  document.getElementById('loan_bar_interest').style.width = (100-pPct)+'%';
+}
+
+// ================= EPF =================
+function calcEPF(){
+  const basic = parseFloat(document.getElementById('epf_basic').value);
+  const eePct = parseFloat(document.getElementById('epf_ee_pct').value);
+  const erPct = parseFloat(document.getElementById('epf_er_pct').value);
+  const existing = parseFloat(document.getElementById('epf_existing').value) || 0;
+  const annualRate = parseFloat(document.getElementById('epf_rate').value);
+  const years = parseFloat(document.getElementById('epf_years').value);
+  const r = annualRate/100/12;
+  const monthlyContribution = basic * (eePct+erPct)/100;
+  const n = years*12;
+  const contribFv = r===0 ? monthlyContribution*n : monthlyContribution * ((Math.pow(1+r,n)-1)/r) * (1+r);
+  const existingFv = existing * Math.pow(1+r, n);
+  const fv = contribFv + existingFv;
+  const invested = monthlyContribution*n + existing;
+  const gain = fv - invested;
+  document.getElementById('epf_result').textContent = INR(fv);
+  document.getElementById('epf_resultsub').textContent = `after ${years} year${years>1?'s':''} of ₹${Math.round(monthlyContribution).toLocaleString('en-IN')}/month combined contribution`;
+  document.getElementById('epf_invested').textContent = INR(invested);
+  document.getElementById('epf_gain').textContent = INR(gain);
+  const existingRow = document.getElementById('epf_existing_row');
+  if(existing > 0){
+    existingRow.classList.remove('hidden');
+    document.getElementById('epf_existing_grown').textContent = INR(existingFv);
+  } else {
+    existingRow.classList.add('hidden');
+  }
+  const investedPct = Math.max(2, Math.min(98,(invested/fv)*100));
+  document.getElementById('epf_bar_invested').style.width = investedPct+'%';
+  document.getElementById('epf_bar_growth').style.width = (100-investedPct)+'%';
+}
+
+// ================= NPS =================
+function calcNPS(){
+  const monthly = parseFloat(document.getElementById('nps_amt').value);
+  const annualRate = parseFloat(document.getElementById('nps_rate').value);
+  const years = parseFloat(document.getElementById('nps_years').value);
+  const existing = parseFloat(document.getElementById('nps_existing').value) || 0;
+  const annuityRate = parseFloat(document.getElementById('nps_annuity_rate').value);
+  const r = annualRate/100/12;
+  const n = years*12;
+  const contribFv = r===0 ? monthly*n : monthly * ((Math.pow(1+r,n)-1)/r) * (1+r);
+  const existingFv = existing * Math.pow(1+r, n);
+  const corpus = contribFv + existingFv;
+  const lumpsum = corpus*0.6;
+  const annuityCorpus = corpus*0.4;
+  const monthlyPension = annuityCorpus * (annuityRate/100) / 12;
+  document.getElementById('nps_result').textContent = INR(corpus);
+  document.getElementById('nps_resultsub').textContent = `after ${years} year${years>1?'s':''} of ₹${Math.round(monthly).toLocaleString('en-IN')}/month`;
+  document.getElementById('nps_lumpsum').textContent = INR(lumpsum);
+  document.getElementById('nps_annuity').textContent = INR(annuityCorpus);
+  document.getElementById('nps_pension').textContent = INR(monthlyPension) + ' /mo';
+  const existingRow = document.getElementById('nps_existing_row');
+  if(existing > 0){
+    existingRow.classList.remove('hidden');
+    document.getElementById('nps_existing_grown').textContent = INR(existingFv);
+  } else {
+    existingRow.classList.add('hidden');
+  }
+}
+
+// ================= KNOW MY TAX (India, FY 2026-27 / AY 2027-28) =================
+// Illustrative estimate only — see disclaimer in the UI. Slab rates per Budget 2026
+// (unchanged from Budget 2025): incometaxindia.gov.in.
+function slabTax(income, brackets){
+  let tax = 0;
+  for(const [lo,hi,rate] of brackets){
+    if(income>lo) tax += (Math.min(income,hi)-lo)*rate;
+  }
+  return tax;
+}
+
+const NEW_REGIME_BRACKETS = [
+  [0,400000,0], [400000,800000,0.05], [800000,1200000,0.10],
+  [1200000,1600000,0.15], [1600000,2000000,0.20], [2000000,2400000,0.25],
+  [2400000,Infinity,0.30]
+];
+
+function oldRegimeBrackets(exemptionLimit){
+  return [
+    [0, exemptionLimit, 0],
+    [exemptionLimit, 500000, 0.05],
+    [500000, 1000000, 0.20],
+    [1000000, Infinity, 0.30]
+  ];
+}
+
+function surchargeRate(income, cappedAt25){
+  if(income>50000000) return cappedAt25 ? 0.25 : 0.37;
+  if(income>20000000) return 0.25;
+  if(income>10000000) return 0.15;
+  if(income>5000000) return 0.10;
+  return 0;
+}
+
+function calcHraExemption(basic, hraReceived, rentPaid, isMetro){
+  if(rentPaid<=0 || hraReceived<=0) return 0;
+  const rentMinus10 = Math.max(0, rentPaid - 0.10*basic);
+  const pctOfBasic = (isMetro?0.5:0.4)*basic;
+  return Math.max(0, Math.min(hraReceived, rentMinus10, pctOfBasic));
+}
+
+function computeNewRegime(grossSalary){
+  const taxableIncome = Math.max(0, grossSalary - 75000);
+  const normalTax = slabTax(taxableIncome, NEW_REGIME_BRACKETS);
+  let tax;
+  if(taxableIncome<=1200000){ tax = 0; }
+  else { tax = Math.min(normalTax, taxableIncome-1200000); }
+  const surcharge = tax*surchargeRate(taxableIncome, true);
+  const cess = (tax+surcharge)*0.04;
+  return {taxableIncome, tax, surcharge, cess, total: tax+surcharge+cess};
+}
+
+function computeOldRegime(grossSalary, hraExemption, c80c, pfAmount, cNps, cOther, ageBand){
+  let taxableIncome = grossSalary - hraExemption - 50000 - Math.min(c80c+pfAmount,150000) - Math.min(cNps,50000) - cOther;
+  taxableIncome = Math.max(0, taxableIncome);
+  const exemptionLimit = ageBand==='senior' ? 300000 : ageBand==='supersenior' ? 500000 : 250000;
+  const normalTax = slabTax(taxableIncome, oldRegimeBrackets(exemptionLimit));
+  const tax = taxableIncome<=500000 ? 0 : normalTax;
+  const surcharge = tax*surchargeRate(taxableIncome, false);
+  const cess = (tax+surcharge)*0.04;
+  return {taxableIncome, tax, surcharge, cess, total: tax+surcharge+cess};
+}
+
+let taxCityType = 'metro';
+let taxAgeBand = 'below60';
+
+function calcTax(){
+  const basic = parseFloat(document.getElementById('tax_basic').value);
+  const hra = parseFloat(document.getElementById('tax_hra').value);
+  const other = parseFloat(document.getElementById('tax_other').value);
+  const pfPct = parseFloat(document.getElementById('tax_pf_pct').value);
+  const rent = parseFloat(document.getElementById('tax_rent').value);
+  const c80c = parseFloat(document.getElementById('tax_80c').value);
+  const cNps = parseFloat(document.getElementById('tax_nps').value);
+  const cOther = parseFloat(document.getElementById('tax_otherded').value);
+
+  const grossSalary = basic+hra+other;
+  const pfAmount = basic * pfPct/100;
+  const hraExemption = calcHraExemption(basic, hra, rent, taxCityType==='metro');
+
+  document.getElementById('tax_pf_note').textContent = `${INR(pfAmount)}/year deducted from your pay into your own EPF account each month — it's not tax, but it does reduce your take-home. It also counts toward your ₹1.5L Section 80C limit under the Old Regime.`;
+  document.getElementById('tax_pf_amount').textContent = INR(pfAmount);
+
+  const newR = computeNewRegime(grossSalary);
+  const oldR = computeOldRegime(grossSalary, hraExemption, c80c, pfAmount, cNps, cOther, taxAgeBand);
+
+  const newWins = newR.total <= oldR.total;
+  const winner = newWins ? newR : oldR;
+  const savings = Math.abs(newR.total - oldR.total);
+
+  document.getElementById('tax_result_label').textContent = `Estimated tax — ${newWins?'New':'Old'} Regime (lower)`;
+  document.getElementById('tax_result').textContent = INR(winner.total);
+  document.getElementById('tax_resultsub').textContent = savings>0 ? `Saves ${INR(savings)} vs the other regime` : 'Both regimes cost the same here';
+
+  document.getElementById('tax_new_total').textContent = INR(newR.total);
+  document.getElementById('tax_old_total').textContent = INR(oldR.total);
+  document.getElementById('tax_card_new').classList.toggle('winner', newWins);
+  document.getElementById('tax_card_old').classList.toggle('winner', !newWins);
+
+  document.getElementById('tax_gross').textContent = INR(grossSalary);
+  const hraRow = document.getElementById('tax_hraexempt_row');
+  if(!newWins && hraExemption>0){
+    hraRow.classList.remove('hidden');
+    document.getElementById('tax_hraexempt').textContent = INR(hraExemption);
+  } else {
+    hraRow.classList.add('hidden');
+  }
+  document.getElementById('tax_taxable').textContent = INR(winner.taxableIncome);
+  document.getElementById('tax_incometax').textContent = INR(winner.tax);
+  const surRow = document.getElementById('tax_surcharge_row');
+  if(winner.surcharge>0){
+    surRow.classList.remove('hidden');
+    document.getElementById('tax_surcharge').textContent = INR(winner.surcharge);
+  } else {
+    surRow.classList.add('hidden');
+  }
+  document.getElementById('tax_cess').textContent = INR(winner.cess);
+  document.getElementById('tax_total').textContent = INR(winner.total);
+  document.getElementById('tax_takehome_monthly').textContent = INR((grossSalary-winner.total-pfAmount)/12);
+}
+
+function toggleTaxDisclaimer(){
+  const body = document.getElementById('tax_disclaimer_body');
+  const btn = document.getElementById('tax_disclaimer_toggle');
+  const collapsed = body.classList.toggle('hidden');
+  btn.textContent = collapsed ? '+' : '−';
+  try{ localStorage.setItem('tax_disclaimer_collapsed', collapsed ? '1' : '0'); }catch(e){}
+}
+try{
+  if(localStorage.getItem('tax_disclaimer_collapsed')==='1'){
+    document.getElementById('tax_disclaimer_body').classList.add('hidden');
+    document.getElementById('tax_disclaimer_toggle').textContent = '+';
+  }
+}catch(e){}
+
+function recalcAll(){
+  calcSIP(); calcStepUp(); calcLumpsum(); calcFD(); calcRD(); calcSWP(); calcLoan(); calcEPF(); calcNPS(); calcTax();
+}
+
+// ---- wire up all sliders ----
+function fmtMoney(v){ return INR(v).replace('₹','₹ '); }
+bindSlider('sip_amt','sip_amt_txt', v=>fmtMoney(v), calcSIP);
+bindSlider('sip_rate','sip_rate_txt', v=>v+' %', calcSIP);
+bindSlider('sip_years','sip_years_txt', v=>v+' yrs', calcSIP);
+bindSlider('sip_existing','sip_existing_txt', v=>fmtMoney(v), calcSIP);
+
+bindSlider('su_amt','su_amt_txt', v=>fmtMoney(v), calcStepUp);
+bindSlider('su_step','su_step_txt', v=>v+' %', calcStepUp);
+bindSlider('su_rate','su_rate_txt', v=>v+' %', calcStepUp);
+bindSlider('su_years','su_years_txt', v=>v+' yrs', calcStepUp);
+bindSlider('su_existing','su_existing_txt', v=>fmtMoney(v), calcStepUp);
+
+bindSlider('ls_amt','ls_amt_txt', v=>fmtMoney(v), calcLumpsum);
+bindSlider('ls_rate','ls_rate_txt', v=>v+' %', calcLumpsum);
+bindSlider('ls_years','ls_years_txt', v=>v+' yrs', calcLumpsum);
+
+bindSlider('fd_amt','fd_amt_txt', v=>fmtMoney(v), calcFD);
+bindSlider('fd_rate','fd_rate_txt', v=>v+' %', calcFD);
+bindSlider('fd_years','fd_years_txt', v=>v+' yrs', calcFD);
+
+bindSlider('rd_amt','rd_amt_txt', v=>fmtMoney(v), calcRD);
+bindSlider('rd_rate','rd_rate_txt', v=>v+' %', calcRD);
+bindSlider('rd_years','rd_years_txt', v=>v+' yrs', calcRD);
+
+bindSlider('swp_corpus','swp_corpus_txt', v=>fmtMoney(v), calcSWP);
+bindSlider('swp_wd','swp_wd_txt', v=>fmtMoney(v), calcSWP);
+bindSlider('swp_rate','swp_rate_txt', v=>v+' %', calcSWP);
+bindSlider('swp_years','swp_years_txt', v=>v+' yrs', calcSWP);
+
+bindSlider('loan_amt','loan_amt_txt', v=>fmtMoney(v), calcLoan);
+bindSlider('loan_rate','loan_rate_txt', v=>v+' %', calcLoan);
+bindSlider('loan_years','loan_years_txt', v=>v+' yrs', calcLoan);
+
+bindSlider('epf_basic','epf_basic_txt', v=>fmtMoney(v), calcEPF);
+bindSlider('epf_ee_pct','epf_ee_pct_txt', v=>v+' %', calcEPF);
+bindSlider('epf_er_pct','epf_er_pct_txt', v=>v+' %', calcEPF);
+bindSlider('epf_existing','epf_existing_txt', v=>fmtMoney(v), calcEPF);
+bindSlider('epf_rate','epf_rate_txt', v=>v+' %', calcEPF);
+bindSlider('epf_years','epf_years_txt', v=>v+' yrs', calcEPF);
+
+bindSlider('nps_amt','nps_amt_txt', v=>fmtMoney(v), calcNPS);
+bindSlider('nps_rate','nps_rate_txt', v=>v+' %', calcNPS);
+bindSlider('nps_years','nps_years_txt', v=>v+' yrs', calcNPS);
+bindSlider('nps_existing','nps_existing_txt', v=>fmtMoney(v), calcNPS);
+bindSlider('nps_annuity_rate','nps_annuity_rate_txt', v=>v+' %', calcNPS);
+
+bindSlider('tax_basic','tax_basic_txt', v=>fmtMoney(v), calcTax);
+bindSlider('tax_hra','tax_hra_txt', v=>fmtMoney(v), calcTax);
+bindSlider('tax_other','tax_other_txt', v=>fmtMoney(v), calcTax);
+bindSlider('tax_pf_pct','tax_pf_pct_txt', v=>v+' %', calcTax);
+bindSlider('tax_rent','tax_rent_txt', v=>fmtMoney(v), calcTax);
+bindSlider('tax_80c','tax_80c_txt', v=>fmtMoney(v), calcTax);
+bindSlider('tax_nps','tax_nps_txt', v=>fmtMoney(v), calcTax);
+bindSlider('tax_otherded','tax_otherded_txt', v=>fmtMoney(v), calcTax);
+
+// City & age toggles for the tax calculator
+document.querySelectorAll('#tax_city_toggle .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#tax_city_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    taxCityType = btn.dataset.v;
+    calcTax();
+  });
+});
+document.querySelectorAll('#tax_age_toggle .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#tax_age_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    taxAgeBand = btn.dataset.v;
+    calcTax();
+  });
+});
+
+// FD frequency toggle
+document.querySelectorAll('#fd_freq_toggle .toggle-btn').forEach((btn,i)=>{
+  if(i===0) btn.classList.add('active');
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#fd_freq_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    fdFreq = parseFloat(btn.dataset.v);
+    calcFD();
+  });
+});
+
+// allow direct typing in the value fields (commit on blur/enter)
+function makeEditable(textId, sliderId, parseFn, onChange){
+  const text = document.getElementById(textId);
+  const slider = document.getElementById(sliderId);
+  text.addEventListener('focus', ()=>{ text.value = parseFloat(slider.value); });
+  text.addEventListener('blur', commit);
+  text.addEventListener('keydown', e=>{ if(e.key==='Enter'){ text.blur(); }});
+  function commit(){
+    let v = parseFloat(text.value.toString().replace(/[^0-9.]/g,''));
+    if(isNaN(v)) v = parseFloat(slider.value);
+    v = Math.max(parseFloat(slider.min), Math.min(parseFloat(slider.max), v));
+    slider.value = v;
+    slider.dispatchEvent(new Event('input'));
+  }
+}
+['sip_amt','sip_rate','sip_years','sip_existing','su_amt','su_step','su_rate','su_years','su_existing',
+ 'ls_amt','ls_rate','ls_years',
+ 'fd_amt','fd_rate','fd_years','rd_amt','rd_rate','rd_years','swp_corpus','swp_wd','swp_rate','swp_years',
+ 'loan_amt','loan_rate','loan_years',
+ 'epf_basic','epf_ee_pct','epf_er_pct','epf_existing','epf_rate','epf_years',
+ 'nps_amt','nps_rate','nps_years','nps_existing','nps_annuity_rate',
+ 'tax_basic','tax_hra','tax_other','tax_pf_pct','tax_rent','tax_80c','tax_nps','tax_otherded'].forEach(base=>{
+  makeEditable(base+'_txt', base, parseFloat, ()=>{});
+});
+
+// ================= CURRENCY CONVERTER & GOLD PRICE =================
+// Data sources: fawazahmed0/currency-api (free, no key, no rate limit) and
+// gold-api.com (free, no key, no rate limit). Both are public JSON endpoints
+// with no personal data sent — only the currency/amount picked on-device.
+const FX_CACHE_MS = 60*60*1000;      // 1 hour
+const GOLD_CACHE_MS = 15*60*1000;    // 15 minutes
+const GRAMS_PER_TROY_OZ = 31.1034768;
+
+const CURRENCIES = [
+  {code:'USD',name:'US Dollar'}, {code:'INR',name:'Indian Rupee'},
+  {code:'AED',name:'UAE Dirham'}, {code:'EUR',name:'Euro'},
+  {code:'GBP',name:'British Pound'}, {code:'SGD',name:'Singapore Dollar'},
+  {code:'AUD',name:'Australian Dollar'}, {code:'CAD',name:'Canadian Dollar'},
+  {code:'SAR',name:'Saudi Riyal'}, {code:'JPY',name:'Japanese Yen'},
+  {code:'CNY',name:'Chinese Yuan'}, {code:'CHF',name:'Swiss Franc'}
+];
+
+function getCached(key, maxAgeMs){
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return null;
+    const obj = JSON.parse(raw);
+    return {data:obj.data, stale: (Date.now()-obj.ts) > maxAgeMs};
+  }catch(e){ return null; }
+}
+function setCached(key, data){
+  try{ localStorage.setItem(key, JSON.stringify({ts:Date.now(), data})); }catch(e){}
+}
+
+async function fetchJson(url){
+  const r = await fetch(url, {cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+
+async function getFxRates(base){
+  const key = 'fx_'+base;
+  const cached = getCached(key, FX_CACHE_MS);
+  if(cached && !cached.stale) return cached.data;
+  try{
+    const json = await fetchJson(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${base}.json`)
+      .catch(()=>fetchJson(`https://latest.currency-api.pages.dev/v1/currencies/${base}.json`));
+    setCached(key, json);
+    return json;
+  }catch(e){
+    if(cached) return cached.data; // stale, but better than nothing
+    throw e;
+  }
+}
+
+async function getGoldSpotUSD(){
+  const key = 'gold_xau_usd';
+  const cached = getCached(key, GOLD_CACHE_MS);
+  if(cached && !cached.stale) return cached.data;
+  try{
+    const json = await fetchJson('https://api.gold-api.com/price/XAU');
+    setCached(key, json);
+    return json;
+  }catch(e){
+    if(cached) return cached.data;
+    throw e;
+  }
+}
+
+// ---- Currency converter ----
+let curRatesCache = null; // {base, date, rates}
+
+function populateCurrencySelects(){
+  const fromSel = document.getElementById('cur_from');
+  if(fromSel.options.length) return;
+  const toSel = document.getElementById('cur_to');
+  CURRENCIES.forEach(c=>{
+    fromSel.appendChild(new Option(`${c.code} — ${c.name}`, c.code));
+    toSel.appendChild(new Option(`${c.code} — ${c.name}`, c.code));
+  });
+  fromSel.value = 'USD';
+  toSel.value = 'INR';
+}
+
+function renderCurrency(){
+  if(!curRatesCache) return;
+  const amt = parseFloat(document.getElementById('cur_amt_txt').value) || 0;
+  const to = document.getElementById('cur_to').value.toLowerCase();
+  const rate = curRatesCache.rates[to];
+  const resultEl = document.getElementById('cur_result');
+  if(rate==null){ resultEl.textContent = '—'; return; }
+  const converted = amt*rate;
+  const locale = to==='inr' ? 'en-IN' : 'en-US';
+  resultEl.textContent = converted.toLocaleString(locale, {maximumFractionDigits:2});
+}
+
+async function loadCurrencyScreen(force){
+  populateCurrencySelects();
+  const from = document.getElementById('cur_from').value;
+  const status = document.getElementById('cur_status');
+  if(!force && curRatesCache && curRatesCache.base===from){ renderCurrency(); return; }
+  status.textContent = 'Fetching live rates…';
+  try{
+    const json = await getFxRates(from.toLowerCase());
+    curRatesCache = {base:from, date:json.date, rates:json[from.toLowerCase()]};
+    renderCurrency();
+    status.textContent = `Rates as of ${curRatesCache.date}`;
+  }catch(e){
+    if(curRatesCache && curRatesCache.base===from){
+      renderCurrency();
+      status.textContent = `Showing rates from ${curRatesCache.date} — couldn't refresh (check connection)`;
+    } else {
+      document.getElementById('cur_result').textContent = '—';
+      status.textContent = "Couldn't fetch live rates. Check your connection and tap Refresh.";
+    }
+  }
+}
+
+document.getElementById('cur_amt_txt').addEventListener('input', renderCurrency);
+document.getElementById('cur_from').addEventListener('change', ()=>loadCurrencyScreen(false));
+document.getElementById('cur_to').addEventListener('change', renderCurrency);
+document.getElementById('cur_refresh').addEventListener('click', ()=>loadCurrencyScreen(true));
+document.getElementById('cur_swap').addEventListener('click', ()=>{
+  const f = document.getElementById('cur_from'), t = document.getElementById('cur_to');
+  const tmp = f.value; f.value = t.value; t.value = tmp;
+  loadCurrencyScreen(false);
+});
+
+// ---- Gold price ----
+function fmtMoneyLoc(v, symbol, locale){
+  return symbol + v.toLocaleString(locale, {maximumFractionDigits:2});
+}
+
+function renderGold(goldJson, fxJson){
+  const usdPerGram24 = goldJson.price / GRAMS_PER_TROY_OZ;
+  const inrRate = fxJson.usd.inr;
+  const aedRate = fxJson.usd.aed;
+
+  const inrPerGram24 = usdPerGram24*inrRate;
+  document.getElementById('gold_in_24').textContent = fmtMoneyLoc(inrPerGram24, '₹', 'en-IN');
+  document.getElementById('gold_in_22').textContent = fmtMoneyLoc(inrPerGram24*22/24, '₹', 'en-IN');
+  document.getElementById('gold_in_24_10').textContent = fmtMoneyLoc(inrPerGram24*10, '₹', 'en-IN');
+
+  const aedPerGram24 = usdPerGram24*aedRate;
+  document.getElementById('gold_ae_24').textContent = fmtMoneyLoc(aedPerGram24, 'AED ', 'en-US');
+  document.getElementById('gold_ae_22').textContent = fmtMoneyLoc(aedPerGram24*22/24, 'AED ', 'en-US');
+
+  document.getElementById('gold_us_oz').textContent = fmtMoneyLoc(goldJson.price, '$', 'en-US');
+  document.getElementById('gold_us_g').textContent = fmtMoneyLoc(usdPerGram24, '$', 'en-US');
+}
+
+async function loadGoldScreen(force){
+  const status = document.getElementById('gold_status');
+  status.textContent = 'Fetching live gold price…';
+  try{
+    const [goldJson, fxJson] = await Promise.all([getGoldSpotUSD(), getFxRates('usd')]);
+    renderGold(goldJson, fxJson);
+    status.textContent = `Updated ${new Date(goldJson.updatedAt).toLocaleString()}`;
+  }catch(e){
+    status.textContent = "Couldn't fetch live gold price. Check your connection and tap Refresh.";
+  }
+}
+
+document.getElementById('gold_refresh').addEventListener('click', ()=>{
+  localStorage.removeItem('gold_xau_usd');
+  localStorage.removeItem('fx_usd');
+  loadGoldScreen(true);
+});
+
+recalcAll();
+</script>
+</body>
+</html>
