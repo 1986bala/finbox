@@ -15,10 +15,28 @@ android {
         versionName = "1.0"
     }
 
+    // Reads from environment variables so no secret ever lives in this file or git history.
+    // Set locally (Build → Generate Signed Bundle in Android Studio still works too) or via
+    // GitHub Actions secrets in CI. Release builds are unsigned if these aren't set.
+    val releaseKeystorePath = System.getenv("RELEASE_KEYSTORE_PATH")
+    signingConfigs {
+        if (releaseKeystorePath != null) {
+            create("release") {
+                storeFile = file(releaseKeystorePath)
+                storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("RELEASE_KEY_ALIAS")
+                keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (releaseKeystorePath != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

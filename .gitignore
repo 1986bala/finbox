@@ -10,3 +10,7 @@
 app/build/
 app/release/
 .claude/
+*.jks
+*.keystore
+*.p12
+KEYSTORE_CREDENTIALS*
