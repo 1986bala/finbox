@@ -261,6 +261,11 @@
         <div class="name">Step-up SIP</div>
         <div class="desc">SIP that grows every year</div>
       </div>
+      <div class="calc-card" onclick="openCalc('goalsip')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 12l5-3M12 12V7"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
+        <div class="name">Goal SIP</div>
+        <div class="desc">SIP needed to hit a target amount</div>
+      </div>
       <div class="calc-card" onclick="openCalc('lumpsum')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
         <div class="name">Lumpsum</div>
@@ -285,6 +290,11 @@
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
         <div class="name">NPS</div>
         <div class="desc">National Pension System corpus</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('ppf')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg>
+        <div class="name">PPF</div>
+        <div class="desc">Public Provident Fund maturity</div>
       </div>
     </div>
 
@@ -415,6 +425,42 @@
       </div>
     </div>
     <div class="note">Step-up applies once a year, on the SIP amount from the previous year. If you already have money invested, add it above — it's assumed to earn the same return as your SIP.</div>
+  </div>
+
+  <!-- GOAL SIP -->
+  <div id="goalsip" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Target amount</span>
+        <input class="field-value" id="gs_target_txt" value="₹ 50,00,000"></div>
+      <input type="range" id="gs_target" min="100000" max="100000000" step="50000" value="5000000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Expected annual return</span>
+        <input class="field-value" id="gs_rate_txt" value="12 %"></div>
+      <input type="range" id="gs_rate" min="1" max="30" step="0.5" value="12">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Time period</span>
+        <input class="field-value" id="gs_years_txt" value="10 yrs"></div>
+      <input type="range" id="gs_years" min="1" max="40" step="1" value="10">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Already invested toward this goal (optional)</span>
+        <input class="field-value" id="gs_existing_txt" value="₹ 0"></div>
+      <input type="range" id="gs_existing" min="0" max="10000000" step="5000" value="0">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Monthly SIP needed</div>
+      <div class="result-figure" id="gs_result">₹0 /mo</div>
+      <div class="result-sub" id="gs_resultsub"></div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Total you'll invest</span><span class="v" id="gs_invested"></span></div>
+        <div class="brow"><span class="k">Growth earned</span><span class="v" id="gs_gain"></span></div>
+        <div class="brow hidden" id="gs_existing_row"><span class="k">Existing amount grows to</span><span class="v" id="gs_existing_grown"></span></div>
+      </div>
+    </div>
+    <div class="note">Works backwards from your SIP calculator's own math: given a target, return, and time period, this solves for the monthly SIP that gets you there. Assumes monthly compounding; actual mutual fund returns are never guaranteed.</div>
   </div>
 
   <!-- LUMPSUM -->
@@ -696,6 +742,49 @@
     <div class="note">NPS returns are market-linked, never guaranteed. At least 40% of the corpus must buy an annuity at retirement — the actual pension depends on the annuity provider and plan you pick then; the annuity rate above is just an assumption you can adjust.</div>
   </div>
 
+  <!-- PPF -->
+  <div id="ppf" class="calc-screen hidden">
+    <div class="field">
+      <div class="field-top"><span class="field-label">Yearly deposit</span>
+        <input class="field-value" id="ppf_amt_txt" value="₹ 1,50,000"></div>
+      <input type="range" id="ppf_amt" min="500" max="150000" step="500" value="150000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">PPF interest rate</span>
+        <input class="field-value" id="ppf_rate_txt" value="7.1 %"></div>
+      <input type="range" id="ppf_rate" min="4" max="10" step="0.1" value="7.1">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Tenure</span>
+        <input class="field-value" id="ppf_years_txt" value="15 yrs"></div>
+      <input type="range" id="ppf_years" min="15" max="50" step="1" value="15">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Current PPF balance (optional)</span>
+        <input class="field-value" id="ppf_existing_txt" value="₹ 0"></div>
+      <input type="range" id="ppf_existing" min="0" max="5000000" step="5000" value="0">
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Maturity value</div>
+      <div class="result-figure" id="ppf_result">₹0</div>
+      <div class="result-sub" id="ppf_resultsub"></div>
+      <div class="bar-wrap">
+        <div class="bar"><div class="seg invested" id="ppf_bar_invested"></div><div class="seg growth" id="ppf_bar_growth"></div></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#5F7290"></i>Deposited</span>
+          <span><i class="dot" style="background:var(--gold)"></i>Interest</span>
+        </div>
+      </div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Total deposited</span><span class="v" id="ppf_invested"></span></div>
+        <div class="brow"><span class="k">Interest earned</span><span class="v" id="ppf_gain"></span></div>
+        <div class="brow hidden" id="ppf_existing_row"><span class="k">Existing balance grows to</span><span class="v" id="ppf_existing_grown"></span></div>
+      </div>
+    </div>
+    <div class="note">PPF has a 15-year lock-in (extendable in 5-year blocks), a ₹1.5L/year deposit cap, and EEE tax status — contributions, interest, and maturity are all tax-free. The government revises the rate quarterly (currently 7.1% for Jul–Sep 2026); this assumes deposits at the start of each year and annual compounding, so it won't match your passbook to the rupee.</div>
+  </div>
+
   <!-- KNOW MY TAX -->
   <div id="tax" class="calc-screen hidden">
     <div class="disclaimer-box">
@@ -887,6 +976,7 @@ const INR = n => {
 const titles = {
   sip:['SIP Calculator','What a steady monthly habit builds into'],
   stepup:['Step-up SIP','Increase your SIP each year, watch the gap widen'],
+  goalsip:['Goal SIP Calculator','Work backwards from a target amount'],
   lumpsum:['Lumpsum Calculator','One deposit, compounding on its own'],
   fd:['Fixed Deposit','Bank FD maturity value'],
   rd:['Recurring Deposit','Monthly bank RD maturity'],
@@ -894,6 +984,7 @@ const titles = {
   loan:['Loan / EMI Calculator','Your monthly instalment, principal vs interest'],
   epf:['EPF Calculator','Provident fund corpus at retirement'],
   nps:['NPS Calculator','National Pension System corpus & pension'],
+  ppf:['PPF Calculator','Public Provident Fund maturity value'],
   tax:['Know My Tax','New vs Old regime, estimated from your salary'],
   currency:['Currency Converter','Live exchange rates'],
   gold:['Gold Price','Spot rates across India, UAE & USA']
@@ -987,6 +1078,37 @@ function calcStepUp(){
   document.getElementById('su_bar_growth').style.width = (100-investedPct)+'%';
 }
 
+// ================= GOAL SIP (reverse SIP) =================
+function calcGoalSIP(){
+  const target = parseFloat(document.getElementById('gs_target').value);
+  const annualRate = parseFloat(document.getElementById('gs_rate').value);
+  const years = parseFloat(document.getElementById('gs_years').value);
+  const existing = parseFloat(document.getElementById('gs_existing').value) || 0;
+  const r = annualRate/100/12;
+  const n = years*12;
+  const existingFv = existing * Math.pow(1+r, n);
+  const remaining = target - existingFv;
+  const annuityFactor = r===0 ? n : ((Math.pow(1+r,n)-1)/r) * (1+r);
+  const requiredSip = remaining>0 ? remaining/annuityFactor : 0;
+  const totalInvested = requiredSip*n + existing;
+  const actualFv = requiredSip*annuityFactor + existingFv;
+  const gain = actualFv - totalInvested;
+
+  document.getElementById('gs_result').textContent = INR(requiredSip) + ' /mo';
+  document.getElementById('gs_resultsub').textContent = remaining<=0
+    ? `Your existing amount alone is projected to pass this target — no extra SIP needed`
+    : `to reach ${INR(target)} in ${years} year${years>1?'s':''}`;
+  document.getElementById('gs_invested').textContent = INR(totalInvested);
+  document.getElementById('gs_gain').textContent = INR(gain);
+  const existingRow = document.getElementById('gs_existing_row');
+  if(existing>0){
+    existingRow.classList.remove('hidden');
+    document.getElementById('gs_existing_grown').textContent = INR(existingFv);
+  } else {
+    existingRow.classList.add('hidden');
+  }
+}
+
 // ================= LUMPSUM =================
 function calcLumpsum(){
   const P = parseFloat(document.getElementById('ls_amt').value);
@@ -1072,6 +1194,34 @@ function calcSWP(){
     document.getElementById('swp_resultsub').textContent = `after ${years} years of ₹${Math.round(wd).toLocaleString('en-IN')}/month withdrawals`;
     document.getElementById('swp_result').style.color = 'var(--gold-bright)';
   }
+}
+
+// ================= PPF =================
+function calcPPF(){
+  const amt = parseFloat(document.getElementById('ppf_amt').value);
+  const annualRate = parseFloat(document.getElementById('ppf_rate').value);
+  const years = parseFloat(document.getElementById('ppf_years').value);
+  const existing = parseFloat(document.getElementById('ppf_existing').value) || 0;
+  const r = annualRate/100;
+  const depositsFv = r===0 ? amt*years : amt * ((Math.pow(1+r,years)-1)/r) * (1+r);
+  const existingFv = existing * Math.pow(1+r, years);
+  const fv = depositsFv + existingFv;
+  const invested = amt*years + existing;
+  const gain = fv - invested;
+  document.getElementById('ppf_result').textContent = INR(fv);
+  document.getElementById('ppf_resultsub').textContent = `after ${years} years of ₹${Math.round(amt).toLocaleString('en-IN')}/year`;
+  document.getElementById('ppf_invested').textContent = INR(invested);
+  document.getElementById('ppf_gain').textContent = INR(gain);
+  const existingRow = document.getElementById('ppf_existing_row');
+  if(existing > 0){
+    existingRow.classList.remove('hidden');
+    document.getElementById('ppf_existing_grown').textContent = INR(existingFv);
+  } else {
+    existingRow.classList.add('hidden');
+  }
+  const investedPct = Math.max(2, Math.min(98,(invested/fv)*100));
+  document.getElementById('ppf_bar_invested').style.width = investedPct+'%';
+  document.getElementById('ppf_bar_growth').style.width = (100-investedPct)+'%';
 }
 
 // ================= LOAN / EMI =================
@@ -1289,7 +1439,7 @@ try{
 }catch(e){}
 
 function recalcAll(){
-  calcSIP(); calcStepUp(); calcLumpsum(); calcFD(); calcRD(); calcSWP(); calcLoan(); calcEPF(); calcNPS(); calcTax();
+  calcSIP(); calcStepUp(); calcGoalSIP(); calcLumpsum(); calcFD(); calcRD(); calcPPF(); calcSWP(); calcLoan(); calcEPF(); calcNPS(); calcTax();
 }
 
 // ---- wire up all sliders ----
@@ -1305,6 +1455,11 @@ bindSlider('su_rate','su_rate_txt', v=>v+' %', calcStepUp);
 bindSlider('su_years','su_years_txt', v=>v+' yrs', calcStepUp);
 bindSlider('su_existing','su_existing_txt', v=>fmtMoney(v), calcStepUp);
 
+bindSlider('gs_target','gs_target_txt', v=>fmtMoney(v), calcGoalSIP);
+bindSlider('gs_rate','gs_rate_txt', v=>v+' %', calcGoalSIP);
+bindSlider('gs_years','gs_years_txt', v=>v+' yrs', calcGoalSIP);
+bindSlider('gs_existing','gs_existing_txt', v=>fmtMoney(v), calcGoalSIP);
+
 bindSlider('ls_amt','ls_amt_txt', v=>fmtMoney(v), calcLumpsum);
 bindSlider('ls_rate','ls_rate_txt', v=>v+' %', calcLumpsum);
 bindSlider('ls_years','ls_years_txt', v=>v+' yrs', calcLumpsum);
@@ -1316,6 +1471,11 @@ bindSlider('fd_years','fd_years_txt', v=>v+' yrs', calcFD);
 bindSlider('rd_amt','rd_amt_txt', v=>fmtMoney(v), calcRD);
 bindSlider('rd_rate','rd_rate_txt', v=>v+' %', calcRD);
 bindSlider('rd_years','rd_years_txt', v=>v+' yrs', calcRD);
+
+bindSlider('ppf_amt','ppf_amt_txt', v=>fmtMoney(v), calcPPF);
+bindSlider('ppf_rate','ppf_rate_txt', v=>v+' %', calcPPF);
+bindSlider('ppf_years','ppf_years_txt', v=>v+' yrs', calcPPF);
+bindSlider('ppf_existing','ppf_existing_txt', v=>fmtMoney(v), calcPPF);
 
 bindSlider('swp_corpus','swp_corpus_txt', v=>fmtMoney(v), calcSWP);
 bindSlider('swp_wd','swp_wd_txt', v=>fmtMoney(v), calcSWP);
@@ -1393,8 +1553,11 @@ function makeEditable(textId, sliderId, parseFn, onChange){
   }
 }
 ['sip_amt','sip_rate','sip_years','sip_existing','su_amt','su_step','su_rate','su_years','su_existing',
+ 'gs_target','gs_rate','gs_years','gs_existing',
  'ls_amt','ls_rate','ls_years',
- 'fd_amt','fd_rate','fd_years','rd_amt','rd_rate','rd_years','swp_corpus','swp_wd','swp_rate','swp_years',
+ 'fd_amt','fd_rate','fd_years','rd_amt','rd_rate','rd_years',
+ 'ppf_amt','ppf_rate','ppf_years','ppf_existing',
+ 'swp_corpus','swp_wd','swp_rate','swp_years',
  'loan_amt','loan_rate','loan_years',
  'epf_basic','epf_ee_pct','epf_er_pct','epf_existing','epf_rate','epf_years',
  'nps_amt','nps_rate','nps_years','nps_existing','nps_annuity_rate',
