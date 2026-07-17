@@ -60,6 +60,13 @@ calculator, investment calculator india
 ## Graphics checklist
 - [x] App icon 512×512 — `store-assets/play-store-icon-512.png`
 - [x] Feature graphic 1024×500 — `store-assets/feature-graphic-1024x500.png`
-- [ ] Phone screenshots — minimum 2, recommended 4-8, 16:9 or 9:16, JPEG/PNG,
-      min dimension 320px, max 3840px. Capture these from the emulator/device
-      once the app is running (see below).
+- [x] Phone screenshots — `store-assets/screenshots/mobile-*.png` (Home, SIP,
+      Know My Tax), 1082×2402. Rendered from the live HTML at a 412×915
+      viewport, not from an actual device — worth double-checking against a
+      real phone/emulator before final submission in case WebView renders
+      anything differently from desktop Chrome.
+- [x] Tablet screenshots (optional but recommended) — `store-assets/screenshots/tablet-*.png`, 1600×2560
+- [ ] Desktop-size renders (`store-assets/screenshots/desktop-*.png`, 2160×1350)
+      exist for reference/marketing use, but Play Store doesn't have a
+      "desktop" screenshot category for a phone/tablet app — not needed for
+      the listing itself.
