@@ -13,12 +13,12 @@
     --navy-soft:#16233A;
     --paper:#F7F4EC;
     --paper-card:#FFFFFF;
-    --gold:#B8873B;
+    --gold:#8a6528;
     --gold-bright:#D9A94A;
     --teal:#1E7F6E;
     --coral:#C1453D;
     --ink:#1A1F2B;
-    --muted:#6B7280;
+    --muted:#5F6672;
     --line:#E7E1D2;
   }
   *{box-sizing:border-box;}
@@ -76,6 +76,20 @@
     font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);
     font-weight:600;margin:22px 0 8px;
   }
+
+  /* ---------- Recently used ---------- */
+  .recent-row{margin-top:18px;}
+  .recent-row .section-eyebrow{margin:0 0 8px;}
+  .recent-chips{
+    display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .recent-chips::-webkit-scrollbar{display:none;}
+  .recent-chip{
+    flex:0 0 auto;padding:9px 16px;border-radius:999px;border:1px solid var(--gold);
+    background:var(--paper-card);color:var(--gold);font-size:12.5px;font-weight:600;white-space:nowrap;
+  }
+  .recent-chip:active{background:var(--navy);color:#EDE7D6;border-color:var(--navy);}
 
   /* ---------- Calculator screen ---------- */
   .field{margin-bottom:20px;}
@@ -248,6 +262,8 @@
   <div id="home">
     <div class="screen-label" style="color:var(--ink);font-size:22px;">Pick a calculator</div>
     <div class="screen-sub" style="color:var(--muted);">Calculators, plus live currency &amp; gold rates</div>
+
+    <div id="recentRow" class="recent-row hidden"></div>
 
     <div class="section-eyebrow">Building wealth</div>
     <div class="grid">
@@ -1066,9 +1082,9 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
     Loan
   </button>
-  <button data-t="swp" onclick="openCalc('swp')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 6l-8 6 8 6"/></svg>
-    SWP
+  <button data-t="tax" onclick="openCalc('tax')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg>
+    Tax
   </button>
 </nav>
 
@@ -1102,6 +1118,32 @@ const titles = {
   gold:['Gold Price','Spot rates across India, UAE & USA']
 };
 
+const CALC_NAMES = {
+  sip:'SIP', stepup:'Step-up SIP', goalsip:'Goal SIP', lumpsum:'Lumpsum', fd:'Fixed Deposit',
+  rd:'Recurring Deposit', epf:'EPF', nps:'NPS', ppf:'PPF', swp:'SWP', loan:'Loan / EMI',
+  tax:'Know My Tax', capgains:'Capital Gains Tax', currency:'Currency', gold:'Gold Price'
+};
+
+function getRecent(){
+  try{ return JSON.parse(localStorage.getItem('nv_recent')||'[]'); }catch(e){ return []; }
+}
+function addRecent(id){
+  if(!CALC_NAMES[id]) return;
+  try{
+    const arr = [id, ...getRecent().filter(x=>x!==id)].slice(0,6);
+    localStorage.setItem('nv_recent', JSON.stringify(arr));
+  }catch(e){}
+}
+function renderRecent(){
+  const row = document.getElementById('recentRow');
+  const arr = getRecent().filter(id=>CALC_NAMES[id]);
+  if(arr.length===0){ row.classList.add('hidden'); row.innerHTML=''; return; }
+  row.classList.remove('hidden');
+  row.innerHTML = '<div class="section-eyebrow">Recently used</div><div class="recent-chips">'
+    + arr.map(id=>`<button class="recent-chip" onclick="openCalc('${id}')">${CALC_NAMES[id]}</button>`).join('')
+    + '</div>';
+}
+
 function goHome(){
   document.getElementById('home').classList.remove('hidden');
   document.querySelectorAll('.calc-screen').forEach(e=>e.classList.add('hidden'));
@@ -1109,6 +1151,7 @@ function goHome(){
   document.querySelectorAll('nav.bottom button').forEach(b=>b.classList.remove('active'));
   document.querySelector('nav.bottom button[data-t="home"]').classList.add('active');
   window.scrollTo(0,0);
+  renderRecent();
 }
 
 function openCalc(id){
@@ -1125,6 +1168,7 @@ function openCalc(id){
   recalcAll();
   if(id==='currency') loadCurrencyScreen(false);
   if(id==='gold') loadGoldScreen(false);
+  addRecent(id);
 }
 
 // ---- remember your last inputs across visits (device-local only) ----
@@ -2032,6 +2076,7 @@ document.getElementById('gold_refresh').addEventListener('click', ()=>{
 });
 
 recalcAll();
+renderRecent();
 </script>
 </body>
 </html>
