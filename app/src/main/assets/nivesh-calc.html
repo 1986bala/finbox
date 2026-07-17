@@ -319,6 +319,11 @@
         <div class="name">Know My Tax</div>
         <div class="desc">Estimate income tax under New vs Old regime, from your salary breakup</div>
       </div>
+      <div class="calc-card" onclick="openCalc('capgains')" style="grid-column:1 / -1;">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+        <div class="name">Capital Gains Tax</div>
+        <div class="desc">Tax on selling equity, debt funds, or gold</div>
+      </div>
     </div>
 
     <div class="section-eyebrow">Live market tools</div>
@@ -518,7 +523,7 @@
     <div class="field">
       <span class="field-label">Compounding frequency</span>
       <div class="toggle-row" id="fd_freq_toggle">
-        <div class="toggle-btn" data-v="4">Quarterly</div>
+        <div class="toggle-btn active" data-v="4">Quarterly</div>
         <div class="toggle-btn" data-v="12">Monthly</div>
         <div class="toggle-btn" data-v="1">Yearly</div>
       </div>
@@ -934,6 +939,72 @@
     <div class="note">Simplifications: assumes a single resident individual with only salary income, no marginal relief on surcharge, and HRA calculated on Basic salary only (add Dearness Allowance to Basic above if you receive it). Tax laws change every Union Budget — treat this as a starting estimate.</div>
   </div>
 
+  <!-- CAPITAL GAINS TAX -->
+  <div id="capgains" class="calc-screen hidden">
+    <div class="disclaimer-box">
+      <div class="disclaimer-head" onclick="toggleCapgainsDisclaimer()">
+        <strong>This is a calculator, not tax advice.</strong>
+        <button class="disclaimer-toggle" id="cg_disclaimer_toggle" type="button" aria-label="Show or hide disclaimer">&minus;</button>
+      </div>
+      <div class="disclaimer-body" id="cg_disclaimer_body">Illustrative estimate for FY 2026-27 (AY 2027-28), single asset sale, no other capital transactions assumed. Verify with a CA before filing.</div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">What did you sell?</span>
+      <div class="toggle-row" id="cg_asset_toggle">
+        <div class="toggle-btn active" data-v="equity">Equity / MF</div>
+        <div class="toggle-btn" data-v="debt">Debt Fund</div>
+        <div class="toggle-btn" data-v="gold">Gold</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Purchase value</span>
+        <input class="field-value" id="cg_buy_txt" value="₹ 1,00,000"></div>
+      <input type="range" id="cg_buy" min="1000" max="10000000" step="1000" value="100000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Sale value</span>
+        <input class="field-value" id="cg_sell_txt" value="₹ 1,60,000"></div>
+      <input type="range" id="cg_sell" min="1000" max="10000000" step="1000" value="160000">
+    </div>
+    <div class="field">
+      <div class="field-top"><span class="field-label">Holding period</span>
+        <input class="field-value" id="cg_months_txt" value="18 mo"></div>
+      <input type="range" id="cg_months" min="1" max="360" step="1" value="18">
+    </div>
+    <div class="field hidden" id="cg_exemption_field">
+      <div class="field-top"><span class="field-label">Equity LTCG exemption already used this year</span>
+        <input class="field-value" id="cg_exempt_used_txt" value="₹ 0"></div>
+      <input type="range" id="cg_exempt_used" min="0" max="125000" step="5000" value="0">
+    </div>
+    <div class="field hidden" id="cg_slab_field">
+      <span class="field-label">Your marginal income tax slab</span>
+      <div class="toggle-row" id="cg_slab_toggle">
+        <div class="toggle-btn" data-v="0">0%</div>
+        <div class="toggle-btn" data-v="5">5%</div>
+        <div class="toggle-btn" data-v="10">10%</div>
+        <div class="toggle-btn" data-v="15">15%</div>
+        <div class="toggle-btn" data-v="20">20%</div>
+        <div class="toggle-btn" data-v="25">25%</div>
+        <div class="toggle-btn active" data-v="30">30%</div>
+      </div>
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label" id="cg_result_label">Tax payable</div>
+      <div class="result-figure" id="cg_result">₹0</div>
+      <div class="result-sub" id="cg_resultsub"></div>
+      <div class="breakdown-rows">
+        <div class="brow"><span class="k">Capital gain</span><span class="v" id="cg_gain"></span></div>
+        <div class="brow"><span class="k">Classification</span><span class="v" id="cg_classification"></span></div>
+        <div class="brow"><span class="k">Tax rate applied</span><span class="v" id="cg_rate_applied"></span></div>
+        <div class="brow"><span class="k">Cess (4%)</span><span class="v" id="cg_cess"></span></div>
+        <div class="brow"><span class="k">Net proceeds after tax</span><span class="v" id="cg_net"></span></div>
+      </div>
+    </div>
+    <div class="note" id="cg_rules_note"></div>
+  </div>
+
   <!-- CURRENCY CONVERTER -->
   <div id="currency" class="calc-screen hidden">
     <div class="field">
@@ -1026,6 +1097,7 @@ const titles = {
   nps:['NPS Calculator','National Pension System corpus & pension'],
   ppf:['PPF Calculator','Public Provident Fund maturity value'],
   tax:['Know My Tax','New vs Old regime, estimated from your salary'],
+  capgains:['Capital Gains Tax','What you owe when you sell'],
   currency:['Currency Converter','Live exchange rates'],
   gold:['Gold Price','Spot rates across India, UAE & USA']
 };
@@ -1055,11 +1127,53 @@ function openCalc(id){
   if(id==='gold') loadGoldScreen(false);
 }
 
+// ---- remember your last inputs across visits (device-local only) ----
+const PERSIST_PREFIX = 'nv_';
+function loadPersisted(id){
+  try{ return localStorage.getItem(PERSIST_PREFIX+id); }catch(e){ return null; }
+}
+function savePersisted(id, value){
+  try{ localStorage.setItem(PERSIST_PREFIX+id, value); }catch(e){}
+}
+
+// ---- generic toggle-group binder (also remembers the last choice) ----
+function bindToggleGroup(containerId, storageKey, onSelect){
+  const container = document.getElementById(containerId);
+  const buttons = container.querySelectorAll('.toggle-btn');
+  const saved = loadPersisted(storageKey);
+  if(saved!==null){
+    let matched = false;
+    buttons.forEach(b=>{
+      if(b.dataset.v===saved){ b.classList.add('active'); matched = true; }
+      else { b.classList.remove('active'); }
+    });
+    if(matched) onSelect(saved);
+  }
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      savePersisted(storageKey, btn.dataset.v);
+      onSelect(btn.dataset.v);
+    });
+  });
+}
+
 // ---- generic slider <-> text binder ----
 function bindSlider(sliderId, textId, formatFn, onChange){
   const slider = document.getElementById(sliderId);
   const text = document.getElementById(textId);
-  slider.addEventListener('input', ()=>{ text.value = formatFn(parseFloat(slider.value)); onChange(); });
+  const saved = loadPersisted(sliderId);
+  if(saved!==null && saved!=='' && !isNaN(parseFloat(saved))){
+    const v = Math.max(parseFloat(slider.min), Math.min(parseFloat(slider.max), parseFloat(saved)));
+    slider.value = v;
+    text.value = formatFn(v);
+  }
+  slider.addEventListener('input', ()=>{
+    text.value = formatFn(parseFloat(slider.value));
+    savePersisted(sliderId, slider.value);
+    onChange();
+  });
 }
 
 // ================= SIP =================
@@ -1534,8 +1648,98 @@ try{
   }
 }catch(e){}
 
+// ================= CAPITAL GAINS TAX =================
+function toggleCapgainsDisclaimer(){
+  const body = document.getElementById('cg_disclaimer_body');
+  const btn = document.getElementById('cg_disclaimer_toggle');
+  const collapsed = body.classList.toggle('hidden');
+  btn.textContent = collapsed ? '+' : '−';
+  try{ localStorage.setItem('cg_disclaimer_collapsed', collapsed ? '1' : '0'); }catch(e){}
+}
+try{
+  if(localStorage.getItem('cg_disclaimer_collapsed')==='1'){
+    document.getElementById('cg_disclaimer_body').classList.add('hidden');
+    document.getElementById('cg_disclaimer_toggle').textContent = '+';
+  }
+}catch(e){}
+
+let cgAssetType = 'equity';
+
+function calcCapGains(){
+  const buy = parseFloat(document.getElementById('cg_buy').value);
+  const sell = parseFloat(document.getElementById('cg_sell').value);
+  const months = parseFloat(document.getElementById('cg_months').value);
+  const exemptUsed = parseFloat(document.getElementById('cg_exempt_used').value) || 0;
+  const slabBtn = document.querySelector('#cg_slab_toggle .toggle-btn.active');
+  const slabRate = (slabBtn ? parseFloat(slabBtn.dataset.v) : 30) / 100;
+  const gain = sell - buy;
+
+  const equityLT = cgAssetType==='equity' && months>12;
+  document.getElementById('cg_exemption_field').classList.toggle('hidden', !equityLT);
+  const showSlab = cgAssetType==='debt' || (cgAssetType==='gold' && months<=24);
+  document.getElementById('cg_slab_field').classList.toggle('hidden', !showSlab);
+
+  if(gain<=0){
+    document.getElementById('cg_result_label').textContent = 'No tax due';
+    document.getElementById('cg_result').textContent = INR(0);
+    document.getElementById('cg_resultsub').textContent = "This is a capital loss, not a gain";
+    document.getElementById('cg_gain').textContent = INR(gain);
+    document.getElementById('cg_classification').textContent = '—';
+    document.getElementById('cg_rate_applied').textContent = '—';
+    document.getElementById('cg_cess').textContent = INR(0);
+    document.getElementById('cg_net').textContent = INR(sell);
+    document.getElementById('cg_rules_note').textContent = "Capital losses aren't taxed. They can typically be carried forward and set off against other capital gains, but the exact rules differ by asset type and are outside this calculator's scope.";
+    return;
+  }
+
+  let isLongTerm, rate, taxableGain, rulesNote;
+  if(cgAssetType==='equity'){
+    isLongTerm = months>12;
+    if(isLongTerm){
+      rate = 0.125;
+      const exemptionLeft = Math.max(0, 125000-exemptUsed);
+      taxableGain = Math.max(0, gain-exemptionLeft);
+      rulesNote = 'Equity LTCG (held over 12 months): 12.5%, with ₹1.25L exempt per financial year (aggregate across all your equity sales). No indexation benefit.';
+    } else {
+      rate = 0.20;
+      taxableGain = gain;
+      rulesNote = 'Equity STCG (held 12 months or less): flat 20%.';
+    }
+  } else if(cgAssetType==='debt'){
+    isLongTerm = false;
+    rate = slabRate;
+    taxableGain = gain;
+    rulesNote = "Debt funds (units bought after April 2023) are taxed at your income tax slab rate regardless of holding period — there's no separate LTCG benefit anymore.";
+  } else {
+    isLongTerm = months>24;
+    if(isLongTerm){
+      rate = 0.125;
+      taxableGain = gain;
+      rulesNote = 'Gold LTCG (held over 24 months): flat 12.5%, no indexation, no exemption threshold.';
+    } else {
+      rate = slabRate;
+      taxableGain = gain;
+      rulesNote = 'Gold STCG (held 24 months or less): taxed at your income tax slab rate.';
+    }
+  }
+
+  const tax = taxableGain*rate;
+  const cess = tax*0.04;
+  const totalTax = tax+cess;
+
+  document.getElementById('cg_result_label').textContent = 'Tax payable';
+  document.getElementById('cg_result').textContent = INR(totalTax);
+  document.getElementById('cg_resultsub').textContent = `on a gain of ${INR(gain)}`;
+  document.getElementById('cg_gain').textContent = INR(gain);
+  document.getElementById('cg_classification').textContent = isLongTerm ? 'Long-term' : 'Short-term';
+  document.getElementById('cg_rate_applied').textContent = (rate*100) + '%';
+  document.getElementById('cg_cess').textContent = INR(cess);
+  document.getElementById('cg_net').textContent = INR(sell-totalTax);
+  document.getElementById('cg_rules_note').textContent = rulesNote;
+}
+
 function recalcAll(){
-  calcSIP(); calcStepUp(); calcGoalSIP(); calcLumpsum(); calcFD(); calcRD(); calcPPF(); calcSWP(); calcLoan(); calcLoanPrepay(); calcEPF(); calcNPS(); calcTax();
+  calcSIP(); calcStepUp(); calcGoalSIP(); calcLumpsum(); calcFD(); calcRD(); calcPPF(); calcSWP(); calcLoan(); calcLoanPrepay(); calcEPF(); calcNPS(); calcTax(); calcCapGains();
 }
 
 // ---- wire up all sliders ----
@@ -1595,14 +1799,7 @@ document.querySelectorAll('#loan_subtab_toggle .toggle-btn').forEach(btn=>{
     if(isPrepay) calcLoanPrepay();
   });
 });
-document.querySelectorAll('#lp_mode_toggle .toggle-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#lp_mode_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    loanPrepayMode = btn.dataset.v;
-    calcLoanPrepay();
-  });
-});
+bindToggleGroup('lp_mode_toggle', 'lp_mode', v=>{ loanPrepayMode = v; calcLoanPrepay(); });
 
 bindSlider('epf_basic','epf_basic_txt', v=>fmtMoney(v), calcEPF);
 bindSlider('epf_ee_pct','epf_ee_pct_txt', v=>v+' %', calcEPF);
@@ -1627,33 +1824,19 @@ bindSlider('tax_nps','tax_nps_txt', v=>fmtMoney(v), calcTax);
 bindSlider('tax_otherded','tax_otherded_txt', v=>fmtMoney(v), calcTax);
 
 // City & age toggles for the tax calculator
-document.querySelectorAll('#tax_city_toggle .toggle-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#tax_city_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    taxCityType = btn.dataset.v;
-    calcTax();
-  });
-});
-document.querySelectorAll('#tax_age_toggle .toggle-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#tax_age_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    taxAgeBand = btn.dataset.v;
-    calcTax();
-  });
-});
+bindToggleGroup('tax_city_toggle', 'tax_city', v=>{ taxCityType = v; calcTax(); });
+bindToggleGroup('tax_age_toggle', 'tax_age', v=>{ taxAgeBand = v; calcTax(); });
+
+bindSlider('cg_buy','cg_buy_txt', v=>fmtMoney(v), calcCapGains);
+bindSlider('cg_sell','cg_sell_txt', v=>fmtMoney(v), calcCapGains);
+bindSlider('cg_months','cg_months_txt', v=>v+' mo', calcCapGains);
+bindSlider('cg_exempt_used','cg_exempt_used_txt', v=>fmtMoney(v), calcCapGains);
+
+bindToggleGroup('cg_asset_toggle', 'cg_asset', v=>{ cgAssetType = v; calcCapGains(); });
+bindToggleGroup('cg_slab_toggle', 'cg_slab', ()=>calcCapGains());
 
 // FD frequency toggle
-document.querySelectorAll('#fd_freq_toggle .toggle-btn').forEach((btn,i)=>{
-  if(i===0) btn.classList.add('active');
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#fd_freq_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    fdFreq = parseFloat(btn.dataset.v);
-    calcFD();
-  });
-});
+bindToggleGroup('fd_freq_toggle', 'fd_freq', v=>{ fdFreq = parseFloat(v); calcFD(); });
 
 // allow direct typing in the value fields (commit on blur/enter)
 function makeEditable(textId, sliderId, parseFn, onChange){
@@ -1679,7 +1862,8 @@ function makeEditable(textId, sliderId, parseFn, onChange){
  'loan_amt','loan_rate','loan_years','lp_amt','lp_after',
  'epf_basic','epf_ee_pct','epf_er_pct','epf_existing','epf_rate','epf_years',
  'nps_amt','nps_rate','nps_years','nps_existing','nps_annuity_rate',
- 'tax_basic','tax_hra','tax_other','tax_pf_pct','tax_rent','tax_80c','tax_nps','tax_otherded'].forEach(base=>{
+ 'tax_basic','tax_hra','tax_other','tax_pf_pct','tax_rent','tax_80c','tax_nps','tax_otherded',
+ 'cg_buy','cg_sell','cg_months','cg_exempt_used'].forEach(base=>{
   makeEditable(base+'_txt', base, parseFloat, ()=>{});
 });
 
