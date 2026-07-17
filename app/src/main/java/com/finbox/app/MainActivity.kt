@@ -1,4 +1,4 @@
-package com.niveshcalc.app
+package com.finbox.app
 
 import android.annotation.SuppressLint
 import android.os.Bundle

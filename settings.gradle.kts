@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "NiveshCalc"
+rootProject.name = "FinBox"
 include(":app")

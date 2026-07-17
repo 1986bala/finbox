@@ -1,6 +1,6 @@
-# Nivesh Calc — Android app
+# FinBox — Android app
 
-A WebView-wrapped Android app showing the Nivesh Calc financial calculators (SIP, Step-up SIP,
+A WebView-wrapped Android app showing the FinBox financial calculators (SIP, Step-up SIP,
 Lumpsum, FD, RD, SWP, Loan/EMI), with a native AdMob banner ad.
 
 ## 1. Open and run it
@@ -56,9 +56,9 @@ In Android Studio: **Build → Generate Signed App Bundle / APK**
 ## What's included
 
 - `app/src/main/assets/nivesh-calc.html` — the calculator UI (same one from the web version)
-- `app/src/main/java/com/niveshcalc/app/MainActivity.kt` — loads the calculator in a WebView,
+- `app/src/main/java/com/finbox/app/MainActivity.kt` — loads the calculator in a WebView,
   loads the AdMob banner
-- `app/src/main/java/com/niveshcalc/app/NiveshApplication.kt` — initializes the AdMob SDK
+- `app/src/main/java/com/finbox/app/FinBoxApplication.kt` — initializes the AdMob SDK
 - `store-assets/play-store-icon-512.png` — ready-to-upload Play Store listing icon
 - `store-assets/feature-graphic-1024x500.png` — ready-to-upload Play Store feature graphic
 - `store-assets/store-listing.md` — drafted store listing copy (title, descriptions, keywords)

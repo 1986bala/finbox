@@ -1,9 +1,9 @@
-package com.niveshcalc.app
+package com.finbox.app
 
 import android.app.Application
 import com.google.android.gms.ads.MobileAds
 
-class NiveshApplication : Application() {
+class FinBoxApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         // Initialize AdMob once, at app startup.

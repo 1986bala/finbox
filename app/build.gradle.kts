@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.niveshcalc.app"
+    namespace = "com.finbox.app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.niveshcalc.app"
+        applicationId = "com.finbox.app"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

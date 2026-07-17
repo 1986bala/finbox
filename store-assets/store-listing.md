@@ -3,7 +3,7 @@
 Paste these directly into Play Console → Grow → Store presence → Main store listing.
 
 ## App name (30 chars max)
-Nivesh Calc: SIP & EMI Tools
+FinBox: SIP & EMI Tools
 
 ## Short description (80 chars max)
 SIP, Lumpsum, FD, RD, SWP & EMI calculators — plan investments in seconds.
@@ -12,7 +12,7 @@ SIP, Lumpsum, FD, RD, SWP & EMI calculators — plan investments in seconds.
 
 ## Full description (4000 chars max)
 
-Nivesh Calc is a simple, fast, offline-friendly financial calculator app for
+FinBox is a simple, fast, offline-friendly financial calculator app for
 everyday investment and loan planning. No sign-up, no clutter — just accurate
 numbers when you need them.
 
@@ -26,7 +26,7 @@ CALCULATORS INCLUDED
 🏠 Loan / EMI Calculator — work out your monthly EMI, total interest, and
    repayment schedule for home, car, or personal loans
 
-WHY NIVESH CALC
+WHY FINBOX
 • Clean, distraction-free interface — get your number and get on with your day
 • Works for every common Indian investment and loan planning scenario
 • No account required, no data entry beyond the numbers you type
@@ -34,9 +34,9 @@ WHY NIVESH CALC
 
 Whether you're planning a new SIP, comparing FD vs RD returns, checking how
 long your retirement corpus will last with a SWP, or figuring out your next
-home loan EMI, Nivesh Calc gives you a clear answer in seconds.
+home loan EMI, FinBox gives you a clear answer in seconds.
 
-Nivesh Calc is supported by non-intrusive banner ads via Google AdMob. We do
+FinBox is supported by non-intrusive banner ads via Google AdMob. We do
 not collect, sell, or store any of the financial figures you enter — all
 calculations happen on your device.
 
