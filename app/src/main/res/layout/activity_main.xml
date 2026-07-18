@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,18 +13,18 @@
         android:layout_weight="1" />
 
     <!--
-      AdMob adaptive banner.
-      ad-unit-id below is Google's PUBLIC TEST banner unit — safe to ship for testing.
-      Replace with your own ad unit ID (created in admob.google.com) before publishing.
-      Test ID reference: https://developers.google.com/admob/android/test-ads
+      AdMob adaptive banner — the AdView itself is created programmatically in
+      MainActivity.kt and added to this container. Its XML-inflation constructor
+      requires ad size/unit attributes we can't provide statically (adaptive size
+      depends on runtime screen width), so building it in code avoids that entirely.
+      ad-unit-id used in code is Google's PUBLIC TEST banner unit — safe to ship for
+      testing. Replace with your own ad unit ID (created in admob.google.com) before
+      publishing. Test ID reference: https://developers.google.com/admob/android/test-ads
     -->
-    <!-- Ad size is set programmatically in MainActivity.kt (adaptive banners need
-         the screen width at runtime, which isn't expressible as a static XML value). -->
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
+    <FrameLayout
+        android:id="@+id/adContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+        android:layout_gravity="bottom" />
 
 </LinearLayout>

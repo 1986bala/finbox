@@ -29,7 +29,7 @@
     font-family:'Inter',system-ui,sans-serif;
     -webkit-tap-highlight-color:transparent;
     overscroll-behavior-y:none;
-    padding-bottom:78px;
+    padding-bottom:58px;
   }
   h1,h2,h3,.display{font-family:'Fraunces',serif;}
   button{font-family:inherit;}
@@ -44,12 +44,11 @@
   }
   .brand{display:flex;align-items:center;gap:10px;}
   .brand .coin{
-    width:34px;height:34px;border-radius:50%;
-    background:radial-gradient(circle at 32% 28%, var(--gold-bright), var(--gold) 60%, #8a6528 100%);
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Fraunces',serif; font-weight:700; color:var(--navy); font-size:18px;
+    width:36px;height:36px;border-radius:10px;
     flex-shrink:0;
+    overflow:hidden;
   }
+  .brand .coin img{width:100%;height:100%;object-fit:cover;display:block;}
   .brand-text .title{font-size:20px;font-weight:600;letter-spacing:0.2px;line-height:1.1;}
   .brand-text .sub{font-size:11px;color:#A9B3C4;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
   .screen-label{margin-top:14px;font-size:26px;font-weight:600;}
@@ -161,18 +160,18 @@
     background:var(--paper-card);
     border-top:1px solid var(--line);
     display:flex; justify-content:space-around;
-    padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+    padding:4px 4px;
   }
   nav.bottom button{
-    background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;
-    font-size:10.5px;color:var(--muted);font-weight:600;padding:4px 6px;flex:1;
+    background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;
+    font-size:10px;color:var(--muted);font-weight:600;padding:2px 6px;flex:1;
   }
   nav.bottom button.active{color:var(--gold);}
-  nav.bottom svg{width:20px;height:20px;}
+  nav.bottom svg{width:17px;height:17px;}
 
   .back-btn{
-    display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:#A9B3C4;
-    font-size:12.5px;font-weight:600;margin-bottom:4px;padding:0;
+    display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--gold-bright);
+    font-size:15px;font-weight:700;margin-bottom:8px;padding:6px 0;
   }
 
   /* ---------- Currency & Gold tools ---------- */
@@ -244,7 +243,7 @@
 
 <header class="top">
   <div class="brand">
-    <div class="coin">₹</div>
+    <div class="coin"><img src="fb_logo.png" alt="FinBox"></div>
     <div class="brand-text">
       <div class="title">FinBox</div>
       <div class="sub">Money math, made visual</div>
@@ -264,6 +263,34 @@
     <div class="screen-sub" style="color:var(--muted);">Calculators, plus live currency &amp; gold rates</div>
 
     <div id="recentRow" class="recent-row hidden"></div>
+
+    <div class="section-eyebrow">Live market tools</div>
+    <div class="grid">
+      <div class="calc-card" onclick="openCalc('currency')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9 15h4a2 2 0 1 0 0-4H9m0 0h4a2 2 0 1 0 0-4H9M9 7v10"/></svg>
+        <div class="name">Currency</div>
+        <div class="desc">Live exchange rate converter</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('gold')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8.5 12h7M12 8.5v7"/></svg>
+        <div class="name">Gold Price</div>
+        <div class="desc">India, UAE &amp; USA, live</div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">Tax planning</div>
+    <div class="grid">
+      <div class="calc-card" onclick="openCalc('tax')" style="grid-column:1 / -1;">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 16l2-6 2 6M9.5 14h3"/></svg>
+        <div class="name">Know My Tax &amp; Take-Home</div>
+        <div class="desc">Estimate income tax under New vs Old regime, from your salary breakup</div>
+      </div>
+      <div class="calc-card" onclick="openCalc('capgains')" style="grid-column:1 / -1;">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+        <div class="name">Capital Gains Tax</div>
+        <div class="desc">Tax on selling equity, debt funds, or gold</div>
+      </div>
+    </div>
 
     <div class="section-eyebrow">Building wealth</div>
     <div class="grid">
@@ -325,34 +352,6 @@
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
         <div class="name">Loan / EMI</div>
         <div class="desc">EMI, plus what prepaying saves you</div>
-      </div>
-    </div>
-
-    <div class="section-eyebrow">Tax planning</div>
-    <div class="grid">
-      <div class="calc-card" onclick="openCalc('tax')" style="grid-column:1 / -1;">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 16l2-6 2 6M9.5 14h3"/></svg>
-        <div class="name">Know My Tax</div>
-        <div class="desc">Estimate income tax under New vs Old regime, from your salary breakup</div>
-      </div>
-      <div class="calc-card" onclick="openCalc('capgains')" style="grid-column:1 / -1;">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
-        <div class="name">Capital Gains Tax</div>
-        <div class="desc">Tax on selling equity, debt funds, or gold</div>
-      </div>
-    </div>
-
-    <div class="section-eyebrow">Live market tools</div>
-    <div class="grid">
-      <div class="calc-card" onclick="openCalc('currency')">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9 15h4a2 2 0 1 0 0-4H9m0 0h4a2 2 0 1 0 0-4H9M9 7v10"/></svg>
-        <div class="name">Currency</div>
-        <div class="desc">Live exchange rate converter</div>
-      </div>
-      <div class="calc-card" onclick="openCalc('gold')">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8.5 12h7M12 8.5v7"/></svg>
-        <div class="name">Gold Price</div>
-        <div class="desc">India, UAE &amp; USA, live</div>
       </div>
     </div>
   </div>
@@ -1112,7 +1111,7 @@ const titles = {
   epf:['EPF Calculator','Provident fund corpus at retirement'],
   nps:['NPS Calculator','National Pension System corpus & pension'],
   ppf:['PPF Calculator','Public Provident Fund maturity value'],
-  tax:['Know My Tax','New vs Old regime, estimated from your salary'],
+  tax:['Know My Tax & Take-Home','New vs Old regime, estimated from your salary'],
   capgains:['Capital Gains Tax','What you owe when you sell'],
   currency:['Currency Converter','Live exchange rates'],
   gold:['Gold Price','Spot rates across India, UAE & USA']
@@ -1121,7 +1120,7 @@ const titles = {
 const CALC_NAMES = {
   sip:'SIP', stepup:'Step-up SIP', goalsip:'Goal SIP', lumpsum:'Lumpsum', fd:'Fixed Deposit',
   rd:'Recurring Deposit', epf:'EPF', nps:'NPS', ppf:'PPF', swp:'SWP', loan:'Loan / EMI',
-  tax:'Know My Tax', capgains:'Capital Gains Tax', currency:'Currency', gold:'Gold Price'
+  tax:'Know My Tax & Take-Home', capgains:'Capital Gains Tax', currency:'Currency', gold:'Gold Price'
 };
 
 function getRecent(){

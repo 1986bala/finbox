@@ -6,39 +6,60 @@ Paste these directly into Play Console → Grow → Store presence → Main stor
 FinBox: SIP & EMI Tools
 
 ## Short description (80 chars max)
-SIP, Lumpsum, FD, RD, SWP & EMI calculators — plan investments in seconds.
+15 calculators for SIP, tax, EMI & PPF — plus live gold & forex rates.
 
-(76 characters)
+(70 characters)
 
 ## Full description (4000 chars max)
 
-FinBox is a simple, fast, offline-friendly financial calculator app for
-everyday investment and loan planning. No sign-up, no clutter — just accurate
-numbers when you need them.
+FinBox is a simple, fast, offline-friendly toolkit of 15 financial
+calculators for everyday investment, retirement, tax, and loan planning.
+No sign-up, no clutter — just accurate numbers when you need them.
 
-CALCULATORS INCLUDED
+BUILDING WEALTH
 📈 SIP Calculator — estimate the future value of your monthly mutual fund SIP
 📈 Step-up SIP Calculator — model a SIP that increases every year
+🎯 Goal SIP Calculator — work backwards from a target amount to the SIP you need
 💰 Lumpsum Calculator — project growth of a one-time investment
 🏦 FD Calculator — calculate maturity value of a Fixed Deposit
 🏦 RD Calculator — calculate maturity value of a Recurring Deposit
+🔒 PPF Calculator — Public Provident Fund maturity value
+🏢 EPF Calculator — provident fund corpus at retirement
+🏛️ NPS Calculator — National Pension System corpus & estimated pension
+
+DRAWING INCOME
 📉 SWP Calculator — plan a Systematic Withdrawal Plan from your corpus
-🏠 Loan / EMI Calculator — work out your monthly EMI, total interest, and
-   repayment schedule for home, car, or personal loans
+
+LOANS
+🏠 Loan / EMI Calculator — monthly instalment, total interest, and a
+   prepayment planner showing how much extra payments actually save you
+
+TAX PLANNING
+🧾 Know My Tax & Take-Home — compares New vs Old income tax regime from your
+   salary breakup, tells you which one saves more, and shows your monthly
+   take-home pay after tax and PF, FY 2026-27 rates
+📊 Capital Gains Tax — tax on selling equity, mutual funds, debt funds, or gold
+
+LIVE MARKET TOOLS
+💱 Currency Converter — live exchange rates across 12+ currencies
+🪙 Gold Price — live reference gold rates across India, UAE & USA
 
 WHY FINBOX
 • Clean, distraction-free interface — get your number and get on with your day
-• Works for every common Indian investment and loan planning scenario
+• Covers the full arc of Indian personal finance: building wealth,
+  retirement, tax, loans, and daily reference rates, in one app
 • No account required, no data entry beyond the numbers you type
+• Your inputs are remembered locally so you don't re-enter them next visit
 • Lightweight app, quick to open, easy on storage
 
-Whether you're planning a new SIP, comparing FD vs RD returns, checking how
-long your retirement corpus will last with a SWP, or figuring out your next
-home loan EMI, FinBox gives you a clear answer in seconds.
+Whether you're planning a new SIP, comparing old vs new tax regime, checking
+how much a loan prepayment saves you, or just want today's gold rate, FinBox
+gives you a clear answer in seconds.
 
-FinBox is supported by non-intrusive banner ads via Google AdMob. We do
-not collect, sell, or store any of the financial figures you enter — all
-calculations happen on your device.
+FinBox is supported by non-intrusive banner ads via Google AdMob. We do not
+collect, sell, or store any of the financial figures you enter — all
+calculations happen on your device. The tax and capital gains calculators are
+illustrative estimates, not professional advice — see in-app disclaimers.
 
 Have feedback or a calculator you'd like added? Reach out via the developer
 contact email on this page.
