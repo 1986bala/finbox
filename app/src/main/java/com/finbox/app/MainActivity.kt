@@ -3,9 +3,11 @@ package com.finbox.app
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,6 +21,18 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private lateinit var adView: AdView
+
+    // Updated from JS (see ScreenBridge below) whenever the SPA navigates. Used so the
+    // Android back button goes to the app's own home screen first, then exits on a
+    // second press, instead of exiting immediately from any screen.
+    @Volatile private var currentScreen: String = "home"
+
+    private inner class ScreenBridge {
+        @JavascriptInterface
+        fun onScreenChanged(screenId: String) {
+            currentScreen = screenId
+        }
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.webViewClient = WebViewClient()
+        webView.addJavascriptInterface(ScreenBridge(), "AndroidBridge")
         webView.loadUrl("file:///android_asset/nivesh-calc.html")
 
         val adContainer: FrameLayout = findViewById(R.id.adContainer)
@@ -49,6 +64,19 @@ class MainActivity : AppCompatActivity() {
         adView.setAdSize(adaptiveBannerAdSize())
         adContainer.addView(adView)
         adView.loadAd(AdRequest.Builder().build())
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                when {
+                    webView.canGoBack() -> webView.goBack()
+                    currentScreen != "home" -> webView.evaluateJavascript("goHome();", null)
+                    else -> {
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                    }
+                }
+            }
+        })
     }
 
     // Adaptive banners size themselves from the device's screen width at runtime —
@@ -79,12 +107,4 @@ class MainActivity : AppCompatActivity() {
         adView.resume()
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith("onBackPressedDispatcher.onBackPressed()"))
-    override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
-        }
-    }
 }

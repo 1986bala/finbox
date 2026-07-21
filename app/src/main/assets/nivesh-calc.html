@@ -92,13 +92,14 @@
 
   /* ---------- Calculator screen ---------- */
   .field{margin-bottom:20px;}
-  .field-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+  .field-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
   .field-label{font-size:13.5px;color:var(--muted);font-weight:500;}
   .field-value{
-    font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--ink);
-    background:none;border:none;text-align:right;width:130px;
+    font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--ink);
+    background:var(--paper-card);border:1.5px solid var(--line);border-radius:10px;
+    text-align:right;width:150px;padding:7px 10px;
   }
-  .field-value:focus{outline:none;color:var(--gold);}
+  .field-value:focus{outline:none;color:var(--gold);border-color:var(--gold);}
   input[type=range]{
     -webkit-appearance:none;width:100%;height:6px;border-radius:4px;
     background:var(--line);outline:none;
@@ -179,10 +180,13 @@
     display:flex;align-items:center;gap:10px;background:var(--paper-card);
     border:1px solid var(--line);border-radius:14px;padding:6px 14px;
   }
-  .currency-row .field-value{width:auto;flex:1;text-align:left;}
+  .currency-row .field-value{
+    width:auto;flex:1;text-align:left;border:none;background:none;padding:0;
+  }
   .currency-select{
     border:none;background:none;font-family:inherit;font-weight:600;font-size:14px;
     color:var(--ink);padding:10px 0;
+    max-width:100px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   .swap-btn{
     display:flex;align-items:center;justify-content:center;margin:8px auto;width:38px;height:38px;
@@ -273,8 +277,8 @@
       </div>
       <div class="calc-card" onclick="openCalc('gold')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8.5 12h7M12 8.5v7"/></svg>
-        <div class="name">Gold Price</div>
-        <div class="desc">India, UAE &amp; USA, live</div>
+        <div class="name">Gold &amp; Silver Price</div>
+        <div class="desc">Live India reference rates</div>
       </div>
     </div>
 
@@ -370,7 +374,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Time period</span>
-        <input class="field-value" id="sip_years_txt" value="15 yrs"></div>
+        <input class="field-value" id="sip_years_txt" value="15 yrs (180 mo)"></div>
       <input type="range" id="sip_years" min="1" max="40" step="1" value="15">
     </div>
     <div class="field">
@@ -418,7 +422,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Time period</span>
-        <input class="field-value" id="su_years_txt" value="15 yrs"></div>
+        <input class="field-value" id="su_years_txt" value="15 yrs (180 mo)"></div>
       <input type="range" id="su_years" min="1" max="40" step="1" value="15">
     </div>
     <div class="field">
@@ -461,7 +465,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Time period</span>
-        <input class="field-value" id="gs_years_txt" value="10 yrs"></div>
+        <input class="field-value" id="gs_years_txt" value="10 yrs (120 mo)"></div>
       <input type="range" id="gs_years" min="1" max="40" step="1" value="10">
     </div>
     <div class="field">
@@ -497,7 +501,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Time period</span>
-        <input class="field-value" id="ls_years_txt" value="15 yrs"></div>
+        <input class="field-value" id="ls_years_txt" value="15 yrs (180 mo)"></div>
       <input type="range" id="ls_years" min="1" max="40" step="1" value="15">
     </div>
 
@@ -532,7 +536,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Tenure</span>
-        <input class="field-value" id="fd_years_txt" value="5 yrs"></div>
+        <input class="field-value" id="fd_years_txt" value="5 yrs (60 mo)"></div>
       <input type="range" id="fd_years" min="1" max="10" step="1" value="5">
     </div>
     <div class="field">
@@ -575,7 +579,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Tenure</span>
-        <input class="field-value" id="rd_years_txt" value="3 yrs"></div>
+        <input class="field-value" id="rd_years_txt" value="3 yrs (36 mo)"></div>
       <input type="range" id="rd_years" min="1" max="10" step="1" value="3">
     </div>
 
@@ -616,7 +620,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Withdrawal period</span>
-        <input class="field-value" id="swp_years_txt" value="20 yrs"></div>
+        <input class="field-value" id="swp_years_txt" value="20 yrs (240 mo)"></div>
       <input type="range" id="swp_years" min="1" max="40" step="1" value="20">
     </div>
 
@@ -646,7 +650,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Tenure</span>
-        <input class="field-value" id="loan_years_txt" value="20 yrs"></div>
+        <input class="field-value" id="loan_years_txt" value="20 yrs (240 mo)"></div>
       <input type="range" id="loan_years" min="1" max="30" step="1" value="20">
     </div>
 
@@ -682,9 +686,9 @@
         <input type="range" id="lp_amt" min="10000" max="5000000" step="10000" value="500000">
       </div>
       <div class="field">
-        <div class="field-top"><span class="field-label">Prepayment after</span>
-          <input class="field-value" id="lp_after_txt" value="3 yrs"></div>
-        <input type="range" id="lp_after" min="0" max="29" step="1" value="3">
+        <div class="field-top"><span class="field-label">EMIs already paid</span>
+          <input class="field-value" id="lp_after_txt" value="3 yrs (36 mo)"></div>
+        <input type="range" id="lp_after" min="0" max="359" step="1" value="36">
       </div>
       <div class="field">
         <span class="field-label">What should the prepayment reduce?</span>
@@ -726,7 +730,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Years to retirement</span>
-        <input class="field-value" id="epf_years_txt" value="25 yrs"></div>
+        <input class="field-value" id="epf_years_txt" value="25 yrs (300 mo)"></div>
       <input type="range" id="epf_years" min="1" max="40" step="1" value="25">
     </div>
     <div class="field">
@@ -774,7 +778,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Years to retirement</span>
-        <input class="field-value" id="nps_years_txt" value="25 yrs"></div>
+        <input class="field-value" id="nps_years_txt" value="25 yrs (300 mo)"></div>
       <input type="range" id="nps_years" min="1" max="40" step="1" value="25">
     </div>
     <div class="field">
@@ -816,7 +820,7 @@
     </div>
     <div class="field">
       <div class="field-top"><span class="field-label">Tenure</span>
-        <input class="field-value" id="ppf_years_txt" value="15 yrs"></div>
+        <input class="field-value" id="ppf_years_txt" value="15 yrs (180 mo)"></div>
       <input type="range" id="ppf_years" min="15" max="50" step="1" value="15">
     </div>
     <div class="field">
@@ -1041,28 +1045,24 @@
     <button class="refresh-btn" id="cur_refresh" type="button">Refresh rates</button>
   </div>
 
-  <!-- GOLD PRICE -->
+  <!-- GOLD & SILVER PRICE -->
   <div id="gold" class="calc-screen hidden">
-    <div class="note" style="margin-top:0;margin-bottom:16px;">Reference spot gold price, converted to local currency. Retail store prices differ due to import duty, GST/VAT, and making charges.</div>
+    <div class="note" style="margin-top:0;margin-bottom:16px;">Reference spot price for India, converted from the international rate. Retail jeweller prices differ due to import duty, GST, and making charges.</div>
 
     <div class="gold-card">
-      <div class="gold-card-title">India</div>
+      <div class="gold-card-title">Gold</div>
       <div class="brow"><span class="k">24K, per gram</span><span class="v" id="gold_in_24">&mdash;</span></div>
       <div class="brow"><span class="k">22K, per gram</span><span class="v" id="gold_in_22">&mdash;</span></div>
       <div class="brow"><span class="k">24K, per 10 g</span><span class="v" id="gold_in_24_10">&mdash;</span></div>
     </div>
     <div class="gold-card">
-      <div class="gold-card-title">UAE</div>
-      <div class="brow"><span class="k">24K, per gram</span><span class="v" id="gold_ae_24">&mdash;</span></div>
-      <div class="brow"><span class="k">22K, per gram</span><span class="v" id="gold_ae_22">&mdash;</span></div>
-    </div>
-    <div class="gold-card">
-      <div class="gold-card-title">USA</div>
-      <div class="brow"><span class="k">Per troy ounce</span><span class="v" id="gold_us_oz">&mdash;</span></div>
-      <div class="brow"><span class="k">Per gram</span><span class="v" id="gold_us_g">&mdash;</span></div>
+      <div class="gold-card-title">Silver</div>
+      <div class="brow"><span class="k">Per gram</span><span class="v" id="silver_in_g">&mdash;</span></div>
+      <div class="brow"><span class="k">Per 10 g</span><span class="v" id="silver_in_10g">&mdash;</span></div>
+      <div class="brow"><span class="k">Per kg</span><span class="v" id="silver_in_kg">&mdash;</span></div>
     </div>
 
-    <div class="note" id="gold_status">Fetching live gold price&hellip;</div>
+    <div class="note" id="gold_status">Fetching live prices&hellip;</div>
     <button class="refresh-btn" id="gold_refresh" type="button">Refresh price</button>
   </div>
 
@@ -1114,13 +1114,13 @@ const titles = {
   tax:['Know My Tax & Take-Home','New vs Old regime, estimated from your salary'],
   capgains:['Capital Gains Tax','What you owe when you sell'],
   currency:['Currency Converter','Live exchange rates'],
-  gold:['Gold Price','Spot rates across India, UAE & USA']
+  gold:['Gold & Silver Price','Live India reference rates']
 };
 
 const CALC_NAMES = {
   sip:'SIP', stepup:'Step-up SIP', goalsip:'Goal SIP', lumpsum:'Lumpsum', fd:'Fixed Deposit',
   rd:'Recurring Deposit', epf:'EPF', nps:'NPS', ppf:'PPF', swp:'SWP', loan:'Loan / EMI',
-  tax:'Know My Tax & Take-Home', capgains:'Capital Gains Tax', currency:'Currency', gold:'Gold Price'
+  tax:'Know My Tax & Take-Home', capgains:'Capital Gains Tax', currency:'Currency', gold:'Gold & Silver Price'
 };
 
 function getRecent(){
@@ -1151,6 +1151,7 @@ function goHome(){
   document.querySelector('nav.bottom button[data-t="home"]').classList.add('active');
   window.scrollTo(0,0);
   renderRecent();
+  if(window.AndroidBridge) AndroidBridge.onScreenChanged('home');
 }
 
 function openCalc(id){
@@ -1168,6 +1169,7 @@ function openCalc(id){
   if(id==='currency') loadCurrencyScreen(false);
   if(id==='gold') loadGoldScreen(false);
   addRecent(id);
+  if(window.AndroidBridge) AndroidBridge.onScreenChanged(id);
 }
 
 // ---- remember your last inputs across visits (device-local only) ----
@@ -1447,15 +1449,14 @@ function calcLoanPrepay(){
   const annualRate = parseFloat(document.getElementById('loan_rate').value);
   const years = parseFloat(document.getElementById('loan_years').value);
   const prepayAmt = parseFloat(document.getElementById('lp_amt').value);
-  const afterYearsRaw = parseFloat(document.getElementById('lp_after').value);
+  const monthsPaidRaw = parseFloat(document.getElementById('lp_after').value);
 
   const r = annualRate/100/12;
   const n = years*12;
   const emi = r===0 ? P/n : P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
   const originalTotal = emi*n;
 
-  const afterYears = Math.max(0, Math.min(afterYearsRaw, years-1));
-  const monthsPaid = Math.round(afterYears*12);
+  const monthsPaid = Math.max(0, Math.min(Math.round(monthsPaidRaw), n-1));
   const balanceBeforePrepay = r===0
     ? P - emi*monthsPaid
     : P*Math.pow(1+r,monthsPaid) - emi*((Math.pow(1+r,monthsPaid)-1)/r);
@@ -1479,7 +1480,7 @@ function calcLoanPrepay(){
   const totalPaidWithPrepay = emi*monthsPaid + prepayAmt + newEmi*newRemainingMonths;
   const interestSaved = originalTotal - totalPaidWithPrepay;
 
-  document.getElementById('lp_after_txt').value = afterYears + ' yrs';
+  document.getElementById('lp_after_txt').value = fmtMonths(monthsPaid);
 
   if(loanPrepayMode==='reduceEmi'){
     document.getElementById('lp_result_label').textContent = 'New EMI';
@@ -1787,50 +1788,61 @@ function recalcAll(){
 
 // ---- wire up all sliders ----
 function fmtMoney(v){ return INR(v).replace('₹','₹ '); }
+function fmtYears(v){
+  const totalMonths = Math.round(v*12);
+  return v+' yrs ('+totalMonths+' mo)';
+}
+function fmtMonths(v){
+  const m = Math.round(v);
+  const y = Math.floor(m/12), rem = m%12;
+  if(y===0) return m+' mo';
+  if(rem===0) return y+' yr'+(y>1?'s':'')+' ('+m+' mo)';
+  return y+'y '+rem+'m ('+m+' mo)';
+}
 bindSlider('sip_amt','sip_amt_txt', v=>fmtMoney(v), calcSIP);
 bindSlider('sip_rate','sip_rate_txt', v=>v+' %', calcSIP);
-bindSlider('sip_years','sip_years_txt', v=>v+' yrs', calcSIP);
+bindSlider('sip_years','sip_years_txt', v=>fmtYears(v), calcSIP);
 bindSlider('sip_existing','sip_existing_txt', v=>fmtMoney(v), calcSIP);
 
 bindSlider('su_amt','su_amt_txt', v=>fmtMoney(v), calcStepUp);
 bindSlider('su_step','su_step_txt', v=>v+' %', calcStepUp);
 bindSlider('su_rate','su_rate_txt', v=>v+' %', calcStepUp);
-bindSlider('su_years','su_years_txt', v=>v+' yrs', calcStepUp);
+bindSlider('su_years','su_years_txt', v=>fmtYears(v), calcStepUp);
 bindSlider('su_existing','su_existing_txt', v=>fmtMoney(v), calcStepUp);
 
 bindSlider('gs_target','gs_target_txt', v=>fmtMoney(v), calcGoalSIP);
 bindSlider('gs_rate','gs_rate_txt', v=>v+' %', calcGoalSIP);
-bindSlider('gs_years','gs_years_txt', v=>v+' yrs', calcGoalSIP);
+bindSlider('gs_years','gs_years_txt', v=>fmtYears(v), calcGoalSIP);
 bindSlider('gs_existing','gs_existing_txt', v=>fmtMoney(v), calcGoalSIP);
 
 bindSlider('ls_amt','ls_amt_txt', v=>fmtMoney(v), calcLumpsum);
 bindSlider('ls_rate','ls_rate_txt', v=>v+' %', calcLumpsum);
-bindSlider('ls_years','ls_years_txt', v=>v+' yrs', calcLumpsum);
+bindSlider('ls_years','ls_years_txt', v=>fmtYears(v), calcLumpsum);
 
 bindSlider('fd_amt','fd_amt_txt', v=>fmtMoney(v), calcFD);
 bindSlider('fd_rate','fd_rate_txt', v=>v+' %', calcFD);
-bindSlider('fd_years','fd_years_txt', v=>v+' yrs', calcFD);
+bindSlider('fd_years','fd_years_txt', v=>fmtYears(v), calcFD);
 
 bindSlider('rd_amt','rd_amt_txt', v=>fmtMoney(v), calcRD);
 bindSlider('rd_rate','rd_rate_txt', v=>v+' %', calcRD);
-bindSlider('rd_years','rd_years_txt', v=>v+' yrs', calcRD);
+bindSlider('rd_years','rd_years_txt', v=>fmtYears(v), calcRD);
 
 bindSlider('ppf_amt','ppf_amt_txt', v=>fmtMoney(v), calcPPF);
 bindSlider('ppf_rate','ppf_rate_txt', v=>v+' %', calcPPF);
-bindSlider('ppf_years','ppf_years_txt', v=>v+' yrs', calcPPF);
+bindSlider('ppf_years','ppf_years_txt', v=>fmtYears(v), calcPPF);
 bindSlider('ppf_existing','ppf_existing_txt', v=>fmtMoney(v), calcPPF);
 
 bindSlider('swp_corpus','swp_corpus_txt', v=>fmtMoney(v), calcSWP);
 bindSlider('swp_wd','swp_wd_txt', v=>fmtMoney(v), calcSWP);
 bindSlider('swp_rate','swp_rate_txt', v=>v+' %', calcSWP);
-bindSlider('swp_years','swp_years_txt', v=>v+' yrs', calcSWP);
+bindSlider('swp_years','swp_years_txt', v=>fmtYears(v), calcSWP);
 
 function calcLoanAndPrepay(){ calcLoan(); calcLoanPrepay(); }
 bindSlider('loan_amt','loan_amt_txt', v=>fmtMoney(v), calcLoanAndPrepay);
 bindSlider('loan_rate','loan_rate_txt', v=>v+' %', calcLoanAndPrepay);
-bindSlider('loan_years','loan_years_txt', v=>v+' yrs', calcLoanAndPrepay);
+bindSlider('loan_years','loan_years_txt', v=>fmtYears(v), calcLoanAndPrepay);
 bindSlider('lp_amt','lp_amt_txt', v=>fmtMoney(v), calcLoanPrepay);
-bindSlider('lp_after','lp_after_txt', v=>v+' yrs', calcLoanPrepay);
+bindSlider('lp_after','lp_after_txt', v=>fmtMonths(v), calcLoanPrepay);
 
 document.querySelectorAll('#loan_subtab_toggle .toggle-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -1849,11 +1861,11 @@ bindSlider('epf_ee_pct','epf_ee_pct_txt', v=>v+' %', calcEPF);
 bindSlider('epf_er_pct','epf_er_pct_txt', v=>v+' %', calcEPF);
 bindSlider('epf_existing','epf_existing_txt', v=>fmtMoney(v), calcEPF);
 bindSlider('epf_rate','epf_rate_txt', v=>v+' %', calcEPF);
-bindSlider('epf_years','epf_years_txt', v=>v+' yrs', calcEPF);
+bindSlider('epf_years','epf_years_txt', v=>fmtYears(v), calcEPF);
 
 bindSlider('nps_amt','nps_amt_txt', v=>fmtMoney(v), calcNPS);
 bindSlider('nps_rate','nps_rate_txt', v=>v+' %', calcNPS);
-bindSlider('nps_years','nps_years_txt', v=>v+' yrs', calcNPS);
+bindSlider('nps_years','nps_years_txt', v=>fmtYears(v), calcNPS);
 bindSlider('nps_existing','nps_existing_txt', v=>fmtMoney(v), calcNPS);
 bindSlider('nps_annuity_rate','nps_annuity_rate_txt', v=>v+' %', calcNPS);
 
@@ -1974,6 +1986,20 @@ async function getGoldSpotUSD(){
   }
 }
 
+async function getSilverSpotUSD(){
+  const key = 'silver_xag_usd';
+  const cached = getCached(key, GOLD_CACHE_MS);
+  if(cached && !cached.stale) return cached.data;
+  try{
+    const json = await fetchJson('https://api.gold-api.com/price/XAG');
+    setCached(key, json);
+    return json;
+  }catch(e){
+    if(cached) return cached.data;
+    throw e;
+  }
+}
+
 // ---- Currency converter ----
 let curRatesCache = null; // {base, date, rates}
 
@@ -2038,38 +2064,37 @@ function fmtMoneyLoc(v, symbol, locale){
   return symbol + v.toLocaleString(locale, {maximumFractionDigits:2});
 }
 
-function renderGold(goldJson, fxJson){
-  const usdPerGram24 = goldJson.price / GRAMS_PER_TROY_OZ;
+function renderGold(goldJson, silverJson, fxJson){
   const inrRate = fxJson.usd.inr;
-  const aedRate = fxJson.usd.aed;
 
+  const usdPerGram24 = goldJson.price / GRAMS_PER_TROY_OZ;
   const inrPerGram24 = usdPerGram24*inrRate;
   document.getElementById('gold_in_24').textContent = fmtMoneyLoc(inrPerGram24, '₹', 'en-IN');
   document.getElementById('gold_in_22').textContent = fmtMoneyLoc(inrPerGram24*22/24, '₹', 'en-IN');
   document.getElementById('gold_in_24_10').textContent = fmtMoneyLoc(inrPerGram24*10, '₹', 'en-IN');
 
-  const aedPerGram24 = usdPerGram24*aedRate;
-  document.getElementById('gold_ae_24').textContent = fmtMoneyLoc(aedPerGram24, 'AED ', 'en-US');
-  document.getElementById('gold_ae_22').textContent = fmtMoneyLoc(aedPerGram24*22/24, 'AED ', 'en-US');
-
-  document.getElementById('gold_us_oz').textContent = fmtMoneyLoc(goldJson.price, '$', 'en-US');
-  document.getElementById('gold_us_g').textContent = fmtMoneyLoc(usdPerGram24, '$', 'en-US');
+  const usdPerGramSilver = silverJson.price / GRAMS_PER_TROY_OZ;
+  const inrPerGramSilver = usdPerGramSilver*inrRate;
+  document.getElementById('silver_in_g').textContent = fmtMoneyLoc(inrPerGramSilver, '₹', 'en-IN');
+  document.getElementById('silver_in_10g').textContent = fmtMoneyLoc(inrPerGramSilver*10, '₹', 'en-IN');
+  document.getElementById('silver_in_kg').textContent = fmtMoneyLoc(inrPerGramSilver*1000, '₹', 'en-IN');
 }
 
 async function loadGoldScreen(force){
   const status = document.getElementById('gold_status');
-  status.textContent = 'Fetching live gold price…';
+  status.textContent = 'Fetching live prices…';
   try{
-    const [goldJson, fxJson] = await Promise.all([getGoldSpotUSD(), getFxRates('usd')]);
-    renderGold(goldJson, fxJson);
+    const [goldJson, silverJson, fxJson] = await Promise.all([getGoldSpotUSD(), getSilverSpotUSD(), getFxRates('usd')]);
+    renderGold(goldJson, silverJson, fxJson);
     status.textContent = `Updated ${new Date(goldJson.updatedAt).toLocaleString()}`;
   }catch(e){
-    status.textContent = "Couldn't fetch live gold price. Check your connection and tap Refresh.";
+    status.textContent = "Couldn't fetch live prices. Check your connection and tap Refresh.";
   }
 }
 
 document.getElementById('gold_refresh').addEventListener('click', ()=>{
   localStorage.removeItem('gold_xau_usd');
+  localStorage.removeItem('silver_xag_usd');
   localStorage.removeItem('fx_usd');
   loadGoldScreen(true);
 });
