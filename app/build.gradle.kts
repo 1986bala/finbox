@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "com.finbox.app"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.finbox.app"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 6
-        versionName = "1.0.5"
+        targetSdk = 36
+        versionCode = 7
+        versionName = "1.0.6"
     }
 
     // Reads from environment variables so no secret ever lives in this file or git history.
