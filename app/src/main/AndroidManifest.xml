@@ -13,14 +13,9 @@
         android:theme="@style/Theme.FinBox"
         android:usesCleartextTraffic="false">
 
-        <!--
-          AdMob App ID — this is Google's PUBLIC TEST App ID.
-          Replace with your real App ID from admob.google.com before publishing.
-          Test ID reference: https://developers.google.com/admob/android/test-ads
-        -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-9726520012934500~1042857579" />
 
         <activity
             android:name=".MainActivity"

@@ -11,8 +11,8 @@ android {
         applicationId = "com.finbox.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.0.6"
+        versionCode = 8
+        versionName = "1.0.7"
     }
 
     // Reads from environment variables so no secret ever lives in this file or git history.
