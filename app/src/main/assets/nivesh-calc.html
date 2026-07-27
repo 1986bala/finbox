@@ -38,7 +38,7 @@
   header.top{
     background:var(--navy);
     color:#EDE7D6;
-    padding:22px 20px 20px;
+    padding:22px 20px 12px;
     position:sticky; top:0; z-index:30;
     box-shadow:0 6px 18px rgba(15,27,45,0.18);
   }
@@ -55,28 +55,45 @@
   .screen-sub{font-size:13px;color:#B7BFCC;margin-top:2px;}
 
   /* ---------- Home grid ---------- */
-  main{padding:18px 16px 24px;max-width:520px;margin:0 auto;}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px;}
+  main{padding:10px 16px 24px;max-width:520px;margin:0 auto;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
   .calc-card{
     background:var(--paper-card);
     border:1px solid var(--line);
-    border-radius:16px;
-    padding:16px 14px;
+    border-radius:14px;
+    padding:10px 10px;
     text-align:left;
     cursor:pointer;
+    display:flex;align-items:center;gap:9px;
     transition:transform .12s ease, box-shadow .12s ease;
   }
   .calc-card:active{transform:scale(0.97);}
-  .calc-card .icon{width:30px;height:30px;margin-bottom:10px;color:var(--gold);}
-  .calc-card .name{font-weight:600;font-size:15px;color:var(--ink);}
-  .calc-card .desc{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.35;}
+  .calc-card .icon{width:20px;height:20px;flex-shrink:0;color:var(--gold);}
+  .calc-card .card-text{min-width:0;}
+  .calc-card .name{font-weight:600;font-size:13px;color:var(--ink);line-height:1.2;}
+  .calc-card .desc{
+    font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.3;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
 
   .section-eyebrow{
     font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);
-    font-weight:600;margin:22px 0 8px;
+    font-weight:600;margin:16px 0 6px;
   }
 
-  /* ---------- Recently used ---------- */
+  /* ---------- Search bar ---------- */
+  .search-bar{
+    display:flex;align-items:center;gap:8px;background:var(--paper-card);
+    border:1px solid var(--line);border-radius:12px;padding:9px 14px;margin-top:14px;
+  }
+  .search-bar svg{width:16px;height:16px;color:var(--muted);flex-shrink:0;}
+  .search-bar input{
+    border:none;outline:none;background:none;font-family:inherit;font-size:13.5px;
+    color:var(--ink);width:100%;
+  }
+  .search-bar input::placeholder{color:var(--muted);}
+
+  /* ---------- Recently used (currently disabled — see search bar above) ---------- */
   .recent-row{margin-top:18px;}
   .recent-row .section-eyebrow{margin:0 0 8px;}
   .recent-chips{
@@ -214,6 +231,9 @@
   .compare-card .cc-label{font-size:10.5px;color:#B7BFCC;text-transform:uppercase;letter-spacing:0.8px;}
   .compare-card .cc-value{font-family:'Fraunces',serif;font-weight:600;font-size:16px;margin-top:4px;color:#EDE7D6;}
   .compare-card.winner .cc-value{color:var(--gold-bright);}
+  .compare-card .cc-sub{font-size:10px;color:#B7BFCC;margin-top:3px;line-height:1.3;}
+  .compare-grid-4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;}
+  .compare-grid-4 .compare-card{padding:12px 10px;}
   .disclaimer-box{
     background:#FBF3E3;border:1px solid var(--gold);border-radius:12px;padding:12px 14px;
     font-size:11.5px;color:#5A4620;line-height:1.5;margin:0 0 18px;
@@ -263,22 +283,28 @@
 <main>
   <!-- HOME -->
   <div id="home">
-    <div class="screen-label" style="color:var(--ink);font-size:22px;">Pick a calculator</div>
+    <div class="screen-label" style="color:var(--ink);font-size:22px;margin-top:0;">Pick a calculator</div>
     <div class="screen-sub" style="color:var(--muted);">Calculators, plus live currency &amp; gold rates</div>
 
+    <!-- Recently used row — disabled in favour of the search bar below.
     <div id="recentRow" class="recent-row hidden"></div>
+    -->
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="calc_search" placeholder="Search calculators&hellip;" autocomplete="off">
+    </div>
 
     <div class="section-eyebrow">Live market tools</div>
     <div class="grid">
       <div class="calc-card" onclick="openCalc('currency')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9 15h4a2 2 0 1 0 0-4H9m0 0h4a2 2 0 1 0 0-4H9M9 7v10"/></svg>
-        <div class="name">Currency</div>
-        <div class="desc">Live exchange rate converter</div>
+        <div class="card-text"><div class="name">Currency</div>
+        <div class="desc">Live exchange rate converter</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('gold')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8.5 12h7M12 8.5v7"/></svg>
-        <div class="name">Gold &amp; Silver Price</div>
-        <div class="desc">Live India reference rates</div>
+        <div class="card-text"><div class="name">Gold &amp; Silver Price</div>
+        <div class="desc">Live India reference rates</div></div>
       </div>
     </div>
 
@@ -286,62 +312,67 @@
     <div class="grid">
       <div class="calc-card" onclick="openCalc('tax')" style="grid-column:1 / -1;">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 16l2-6 2 6M9.5 14h3"/></svg>
-        <div class="name">Know My Tax &amp; Take-Home</div>
-        <div class="desc">Estimate income tax under New vs Old regime, from your salary breakup</div>
+        <div class="card-text"><div class="name">Know My Tax &amp; Take-Home</div>
+        <div class="desc">Estimate income tax under New vs Old regime, from your salary breakup</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('capgains')" style="grid-column:1 / -1;">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
-        <div class="name">Capital Gains Tax</div>
-        <div class="desc">Tax on selling equity, debt funds, or gold</div>
+        <div class="card-text"><div class="name">Capital Gains Tax</div>
+        <div class="desc">Tax on selling equity, debt funds, or gold</div></div>
       </div>
     </div>
 
     <div class="section-eyebrow">Building wealth</div>
     <div class="grid">
+      <div class="calc-card" onclick="openCalc('compare')" style="grid-column:1 / -1;">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3L4 7l4 4"/><path d="M4 7h16"/><path d="M16 21l4-4-4-4"/><path d="M20 17H4"/></svg>
+        <div class="card-text"><div class="name">Compare Options</div>
+        <div class="desc">SIP vs Lumpsum vs FD vs EPF, or loan tenure side by side</div></div>
+      </div>
       <div class="calc-card" onclick="openCalc('sip')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l5-5 4 3 8-9"/><path d="M15 6h5v5"/></svg>
-        <div class="name">SIP</div>
-        <div class="desc">Monthly investing, compounded</div>
+        <div class="card-text"><div class="name">SIP</div>
+        <div class="desc">Monthly investing, compounded</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('stepup')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V14M10 20V10M16 20V6M22 20V3"/></svg>
-        <div class="name">Step-up SIP</div>
-        <div class="desc">SIP that grows every year</div>
+        <div class="card-text"><div class="name">Step-up SIP</div>
+        <div class="desc">SIP that grows every year</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('goalsip')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 12l5-3M12 12V7"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
-        <div class="name">Goal SIP</div>
-        <div class="desc">SIP needed to hit a target amount</div>
+        <div class="card-text"><div class="name">Goal SIP</div>
+        <div class="desc">SIP needed to hit a target amount</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('lumpsum')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-        <div class="name">Lumpsum</div>
-        <div class="desc">One-time investment growth</div>
+        <div class="card-text"><div class="name">Lumpsum</div>
+        <div class="desc">One-time investment growth</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('fd')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-        <div class="name">Fixed Deposit</div>
-        <div class="desc">Bank FD maturity value</div>
+        <div class="card-text"><div class="name">Fixed Deposit</div>
+        <div class="desc">Bank FD maturity value</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('rd')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2"/><circle cx="12" cy="12" r="5"/></svg>
-        <div class="name">Recurring Deposit</div>
-        <div class="desc">Monthly bank RD maturity</div>
+        <div class="card-text"><div class="name">Recurring Deposit</div>
+        <div class="desc">Monthly bank RD maturity</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('epf')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z"/></svg>
-        <div class="name">EPF</div>
-        <div class="desc">Provident fund at retirement</div>
+        <div class="card-text"><div class="name">EPF</div>
+        <div class="desc">Provident fund at retirement</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('nps')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
-        <div class="name">NPS</div>
-        <div class="desc">National Pension System corpus</div>
+        <div class="card-text"><div class="name">NPS</div>
+        <div class="desc">National Pension System corpus</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('ppf')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg>
-        <div class="name">PPF</div>
-        <div class="desc">Public Provident Fund maturity</div>
+        <div class="card-text"><div class="name">PPF</div>
+        <div class="desc">Public Provident Fund maturity</div></div>
       </div>
     </div>
 
@@ -349,13 +380,13 @@
     <div class="grid">
       <div class="calc-card" onclick="openCalc('swp')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18M14 6l-8 6 8 6"/></svg>
-        <div class="name">SWP</div>
-        <div class="desc">Withdraw monthly from a corpus</div>
+        <div class="card-text"><div class="name">SWP</div>
+        <div class="desc">Withdraw monthly from a corpus</div></div>
       </div>
       <div class="calc-card" onclick="openCalc('loan')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
-        <div class="name">Loan / EMI</div>
-        <div class="desc">EMI, plus what prepaying saves you</div>
+        <div class="card-text"><div class="name">Loan / EMI</div>
+        <div class="desc">EMI, plus what prepaying saves you</div></div>
       </div>
     </div>
   </div>
@@ -1066,6 +1097,123 @@
     <button class="refresh-btn" id="gold_refresh" type="button">Refresh price</button>
   </div>
 
+  <!-- COMPARE -->
+  <div id="compare" class="calc-screen hidden">
+    <div class="toggle-row" id="compare_subtab_toggle">
+      <div class="toggle-btn active" data-v="invest">Investment Mix</div>
+      <div class="toggle-btn" data-v="loan">Loan Tenure</div>
+    </div>
+
+    <div id="compare_invest_panel" style="margin-top:20px;">
+      <div class="field">
+        <div class="field-top"><span class="field-label">Monthly amount you can invest</span>
+          <input class="field-value" id="cmp_monthly_txt" value="₹ 15,000"></div>
+        <input type="range" id="cmp_monthly" min="500" max="200000" step="500" value="15000">
+      </div>
+      <div class="field">
+        <div class="field-top"><span class="field-label">Time period</span>
+          <input class="field-value" id="cmp_years_txt" value="15 yrs (180 mo)"></div>
+        <input type="range" id="cmp_years" min="1" max="40" step="1" value="15">
+      </div>
+      <div class="field">
+        <div class="field-top"><span class="field-label">SIP — expected return</span>
+          <input class="field-value" id="cmp_sip_rate_txt" value="12 %"></div>
+        <input type="range" id="cmp_sip_rate" min="1" max="30" step="0.5" value="12">
+      </div>
+      <div class="field">
+        <div class="field-top"><span class="field-label">EPF — interest rate</span>
+          <input class="field-value" id="cmp_epf_rate_txt" value="8.25 %"></div>
+        <input type="range" id="cmp_epf_rate" min="1" max="12" step="0.05" value="8.25">
+      </div>
+      <div class="field">
+        <div class="field-top"><span class="field-label">Lumpsum (upfront) — return</span>
+          <input class="field-value" id="cmp_ls_rate_txt" value="12 %"></div>
+        <input type="range" id="cmp_ls_rate" min="1" max="30" step="0.5" value="12">
+      </div>
+      <div class="field">
+        <div class="field-top"><span class="field-label">FD (upfront) — rate</span>
+          <input class="field-value" id="cmp_fd_rate_txt" value="6.5 %"></div>
+        <input type="range" id="cmp_fd_rate" min="1" max="12" step="0.1" value="6.5">
+      </div>
+
+      <div class="result-panel">
+        <div class="result-label">Maturity value, by option</div>
+        <div class="result-sub" id="cmp_invest_sub"></div>
+        <div class="compare-grid-4">
+          <div class="compare-card" id="cmp_card_sip">
+            <div class="cc-label">SIP</div>
+            <div class="cc-value" id="cmp_sip_value">₹0</div>
+            <div class="cc-sub" id="cmp_sip_sub"></div>
+          </div>
+          <div class="compare-card" id="cmp_card_epf">
+            <div class="cc-label">EPF</div>
+            <div class="cc-value" id="cmp_epf_value">₹0</div>
+            <div class="cc-sub" id="cmp_epf_sub"></div>
+          </div>
+          <div class="compare-card" id="cmp_card_ls">
+            <div class="cc-label">Lumpsum</div>
+            <div class="cc-value" id="cmp_ls_value">₹0</div>
+            <div class="cc-sub" id="cmp_ls_sub"></div>
+          </div>
+          <div class="compare-card" id="cmp_card_fd">
+            <div class="cc-label">FD</div>
+            <div class="cc-value" id="cmp_fd_value">₹0</div>
+            <div class="cc-sub" id="cmp_fd_sub"></div>
+          </div>
+        </div>
+        <div class="breakdown-rows">
+          <div class="brow"><span class="k">Total paid in, SIP / EPF (monthly)</span><span class="v" id="cmp_invested_monthly"></span></div>
+          <div class="brow"><span class="k">Same total, Lumpsum / FD (day one)</span><span class="v" id="cmp_invested_upfront"></span></div>
+        </div>
+      </div>
+      <div class="note">SIP and EPF assume the same amount invested every month. Lumpsum and FD assume the equivalent total amount is instead available and invested on day one — which gives them a head start, so they aren't a perfectly fair comparison to a monthly investor. Treat this as directional, not exact.</div>
+    </div>
+
+    <div id="compare_loan_panel" class="hidden" style="margin-top:20px;">
+      <div class="field">
+        <div class="field-top"><span class="field-label">Loan amount</span>
+          <input class="field-value" id="cmp_loan_amt_txt" value="₹ 40,00,000"></div>
+        <input type="range" id="cmp_loan_amt" min="50000" max="20000000" step="50000" value="4000000">
+      </div>
+      <div class="field">
+        <div class="field-top"><span class="field-label">Interest rate</span>
+          <input class="field-value" id="cmp_loan_rate_txt" value="8.5 %"></div>
+        <input type="range" id="cmp_loan_rate" min="1" max="20" step="0.1" value="8.5">
+      </div>
+      <div class="field">
+        <div class="field-top"><span class="field-label">Tenure A</span>
+          <input class="field-value" id="cmp_tenure_a_txt" value="15 yrs (180 mo)"></div>
+        <input type="range" id="cmp_tenure_a" min="1" max="30" step="1" value="15">
+      </div>
+      <div class="field">
+        <div class="field-top"><span class="field-label">Tenure B</span>
+          <input class="field-value" id="cmp_tenure_b_txt" value="20 yrs (240 mo)"></div>
+        <input type="range" id="cmp_tenure_b" min="1" max="30" step="1" value="20">
+      </div>
+
+      <div class="result-panel">
+        <div class="result-label">EMI, side by side</div>
+        <div class="compare-row">
+          <div class="compare-card" id="cmp_tenureA_card">
+            <div class="cc-label" id="cmp_tenureA_label">15 yrs</div>
+            <div class="cc-value" id="cmp_tenureA_emi">₹0</div>
+            <div class="cc-sub" id="cmp_tenureA_sub"></div>
+          </div>
+          <div class="compare-card" id="cmp_tenureB_card">
+            <div class="cc-label" id="cmp_tenureB_label">20 yrs</div>
+            <div class="cc-value" id="cmp_tenureB_emi">₹0</div>
+            <div class="cc-sub" id="cmp_tenureB_sub"></div>
+          </div>
+        </div>
+        <div class="breakdown-rows">
+          <div class="brow"><span class="k">Extra EMI per month, shorter tenure</span><span class="v" id="cmp_emi_diff"></span></div>
+          <div class="brow"><span class="k">Extra interest paid, longer tenure</span><span class="v" id="cmp_interest_diff"></span></div>
+        </div>
+      </div>
+      <div class="note">The shorter tenure usually saves more total interest, but comes with a bigger EMI — pick whichever your monthly budget can comfortably absorb.</div>
+    </div>
+  </div>
+
 </main>
 
 <nav class="bottom" id="bottomNav">
@@ -1114,13 +1262,15 @@ const titles = {
   tax:['Know My Tax & Take-Home','New vs Old regime, estimated from your salary'],
   capgains:['Capital Gains Tax','What you owe when you sell'],
   currency:['Currency Converter','Live exchange rates'],
-  gold:['Gold & Silver Price','Live India reference rates']
+  gold:['Gold & Silver Price','Live India reference rates'],
+  compare:['Compare Options','Investment mix or loan tenure, side by side']
 };
 
 const CALC_NAMES = {
   sip:'SIP', stepup:'Step-up SIP', goalsip:'Goal SIP', lumpsum:'Lumpsum', fd:'Fixed Deposit',
   rd:'Recurring Deposit', epf:'EPF', nps:'NPS', ppf:'PPF', swp:'SWP', loan:'Loan / EMI',
-  tax:'Know My Tax & Take-Home', capgains:'Capital Gains Tax', currency:'Currency', gold:'Gold & Silver Price'
+  tax:'Know My Tax & Take-Home', capgains:'Capital Gains Tax', currency:'Currency', gold:'Gold & Silver Price',
+  compare:'Compare Options'
 };
 
 function getRecent(){
@@ -1143,6 +1293,27 @@ function renderRecent(){
     + '</div>';
 }
 
+// ---- home screen search ----
+function initCalcSearch(){
+  const input = document.getElementById('calc_search');
+  if(!input) return;
+  input.addEventListener('input', ()=>{
+    const q = input.value.trim().toLowerCase();
+    document.querySelectorAll('#home .section-eyebrow').forEach(eyebrow=>{
+      const grid = eyebrow.nextElementSibling;
+      if(!grid || !grid.classList.contains('grid')) return;
+      let anyVisible = false;
+      grid.querySelectorAll('.calc-card').forEach(card=>{
+        const match = q==='' || card.textContent.toLowerCase().includes(q);
+        card.classList.toggle('hidden', !match);
+        if(match) anyVisible = true;
+      });
+      eyebrow.classList.toggle('hidden', !anyVisible);
+      grid.classList.toggle('hidden', !anyVisible);
+    });
+  });
+}
+
 function goHome(){
   document.getElementById('home').classList.remove('hidden');
   document.querySelectorAll('.calc-screen').forEach(e=>e.classList.add('hidden'));
@@ -1150,7 +1321,7 @@ function goHome(){
   document.querySelectorAll('nav.bottom button').forEach(b=>b.classList.remove('active'));
   document.querySelector('nav.bottom button[data-t="home"]').classList.add('active');
   window.scrollTo(0,0);
-  renderRecent();
+  // renderRecent(); // Recently-used row disabled in favour of the search bar
   if(window.AndroidBridge) AndroidBridge.onScreenChanged('home');
 }
 
@@ -1168,7 +1339,7 @@ function openCalc(id){
   recalcAll();
   if(id==='currency') loadCurrencyScreen(false);
   if(id==='gold') loadGoldScreen(false);
-  addRecent(id);
+  // addRecent(id); // Recently-used row disabled in favour of the search bar
   if(window.AndroidBridge) AndroidBridge.onScreenChanged(id);
 }
 
@@ -1783,7 +1954,76 @@ function calcCapGains(){
 }
 
 function recalcAll(){
-  calcSIP(); calcStepUp(); calcGoalSIP(); calcLumpsum(); calcFD(); calcRD(); calcPPF(); calcSWP(); calcLoan(); calcLoanPrepay(); calcEPF(); calcNPS(); calcTax(); calcCapGains();
+  calcSIP(); calcStepUp(); calcGoalSIP(); calcLumpsum(); calcFD(); calcRD(); calcPPF(); calcSWP(); calcLoan(); calcLoanPrepay(); calcEPF(); calcNPS(); calcTax(); calcCapGains(); calcCompareInvest(); calcCompareLoan();
+}
+
+// ================= COMPARE =================
+function calcCompareInvest(){
+  const monthly = parseFloat(document.getElementById('cmp_monthly').value);
+  const years = parseFloat(document.getElementById('cmp_years').value);
+  const sipRate = parseFloat(document.getElementById('cmp_sip_rate').value);
+  const epfRate = parseFloat(document.getElementById('cmp_epf_rate').value);
+  const lsRate = parseFloat(document.getElementById('cmp_ls_rate').value);
+  const fdRate = parseFloat(document.getElementById('cmp_fd_rate').value);
+  const n = years*12;
+  const totalContribution = monthly*n;
+
+  const rSip = sipRate/100/12;
+  const sipFv = rSip===0 ? monthly*n : monthly * ((Math.pow(1+rSip,n)-1)/rSip) * (1+rSip);
+
+  const rEpf = epfRate/100/12;
+  const epfFv = rEpf===0 ? monthly*n : monthly * ((Math.pow(1+rEpf,n)-1)/rEpf) * (1+rEpf);
+
+  const lsFv = totalContribution*Math.pow(1+lsRate/100, years);
+
+  const fdN = 4;
+  const fdFv = totalContribution*Math.pow(1 + (fdRate/100)/fdN, fdN*years);
+
+  const results = [
+    {key:'sip', fv:sipFv, invested:totalContribution},
+    {key:'epf', fv:epfFv, invested:totalContribution},
+    {key:'ls', fv:lsFv, invested:totalContribution},
+    {key:'fd', fv:fdFv, invested:totalContribution}
+  ];
+  const best = results.reduce((a,b)=> b.fv>a.fv ? b : a).key;
+
+  results.forEach(r=>{
+    document.getElementById('cmp_'+r.key+'_value').textContent = INR(r.fv);
+    document.getElementById('cmp_'+r.key+'_sub').textContent = 'Gain: '+INR(r.fv-r.invested);
+    document.getElementById('cmp_card_'+r.key).classList.toggle('winner', r.key===best);
+  });
+
+  document.getElementById('cmp_invest_sub').textContent = `₹${Math.round(monthly).toLocaleString('en-IN')}/month, or the same total upfront, over ${years} year${years>1?'s':''}`;
+  document.getElementById('cmp_invested_monthly').textContent = INR(totalContribution);
+  document.getElementById('cmp_invested_upfront').textContent = INR(totalContribution);
+}
+
+function calcCompareLoan(){
+  const P = parseFloat(document.getElementById('cmp_loan_amt').value);
+  const annualRate = parseFloat(document.getElementById('cmp_loan_rate').value);
+  const yearsA = parseFloat(document.getElementById('cmp_tenure_a').value);
+  const yearsB = parseFloat(document.getElementById('cmp_tenure_b').value);
+  const r = annualRate/100/12;
+
+  function emiFor(years){
+    const n = years*12;
+    const emi = r===0 ? P/n : P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+    const total = emi*n;
+    return {emi, interest: total-P};
+  }
+  const a = emiFor(yearsA), b = emiFor(yearsB);
+
+  document.getElementById('cmp_tenureA_label').textContent = `${yearsA} yr${yearsA>1?'s':''}`;
+  document.getElementById('cmp_tenureB_label').textContent = `${yearsB} yr${yearsB>1?'s':''}`;
+  document.getElementById('cmp_tenureA_emi').textContent = INR(a.emi) + ' /mo';
+  document.getElementById('cmp_tenureB_emi').textContent = INR(b.emi) + ' /mo';
+  document.getElementById('cmp_tenureA_sub').textContent = 'Total interest: '+INR(a.interest);
+  document.getElementById('cmp_tenureB_sub').textContent = 'Total interest: '+INR(b.interest);
+  document.getElementById('cmp_tenureA_card').classList.toggle('winner', a.interest < b.interest);
+  document.getElementById('cmp_tenureB_card').classList.toggle('winner', b.interest < a.interest);
+
+  document.getElementById('cmp_emi_diff').textContent = INR(Math.abs(a.emi-b.emi)) + ` (${a.emi>b.emi?yearsA:yearsB}-yr option)`;
+  document.getElementById('cmp_interest_diff').textContent = INR(Math.abs(a.interest-b.interest)) + ` (${a.interest>b.interest?yearsA:yearsB}-yr option)`;
 }
 
 // ---- wire up all sliders ----
@@ -1893,6 +2133,29 @@ bindToggleGroup('cg_slab_toggle', 'cg_slab', ()=>calcCapGains());
 // FD frequency toggle
 bindToggleGroup('fd_freq_toggle', 'fd_freq', v=>{ fdFreq = parseFloat(v); calcFD(); });
 
+bindSlider('cmp_monthly','cmp_monthly_txt', v=>fmtMoney(v), calcCompareInvest);
+bindSlider('cmp_years','cmp_years_txt', v=>fmtYears(v), calcCompareInvest);
+bindSlider('cmp_sip_rate','cmp_sip_rate_txt', v=>v+' %', calcCompareInvest);
+bindSlider('cmp_epf_rate','cmp_epf_rate_txt', v=>v+' %', calcCompareInvest);
+bindSlider('cmp_ls_rate','cmp_ls_rate_txt', v=>v+' %', calcCompareInvest);
+bindSlider('cmp_fd_rate','cmp_fd_rate_txt', v=>v+' %', calcCompareInvest);
+
+bindSlider('cmp_loan_amt','cmp_loan_amt_txt', v=>fmtMoney(v), calcCompareLoan);
+bindSlider('cmp_loan_rate','cmp_loan_rate_txt', v=>v+' %', calcCompareLoan);
+bindSlider('cmp_tenure_a','cmp_tenure_a_txt', v=>fmtYears(v), calcCompareLoan);
+bindSlider('cmp_tenure_b','cmp_tenure_b_txt', v=>fmtYears(v), calcCompareLoan);
+
+document.querySelectorAll('#compare_subtab_toggle .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#compare_subtab_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const isLoan = btn.dataset.v==='loan';
+    document.getElementById('compare_invest_panel').classList.toggle('hidden', isLoan);
+    document.getElementById('compare_loan_panel').classList.toggle('hidden', !isLoan);
+    if(isLoan) calcCompareLoan(); else calcCompareInvest();
+  });
+});
+
 // allow direct typing in the value fields (commit on blur/enter)
 function makeEditable(textId, sliderId, parseFn, onChange){
   const text = document.getElementById(textId);
@@ -1918,7 +2181,9 @@ function makeEditable(textId, sliderId, parseFn, onChange){
  'epf_basic','epf_ee_pct','epf_er_pct','epf_existing','epf_rate','epf_years',
  'nps_amt','nps_rate','nps_years','nps_existing','nps_annuity_rate',
  'tax_basic','tax_hra','tax_other','tax_pf_pct','tax_rent','tax_80c','tax_nps','tax_otherded',
- 'cg_buy','cg_sell','cg_months','cg_exempt_used'].forEach(base=>{
+ 'cg_buy','cg_sell','cg_months','cg_exempt_used',
+ 'cmp_monthly','cmp_years','cmp_sip_rate','cmp_epf_rate','cmp_ls_rate','cmp_fd_rate',
+ 'cmp_loan_amt','cmp_loan_rate','cmp_tenure_a','cmp_tenure_b'].forEach(base=>{
   makeEditable(base+'_txt', base, parseFloat, ()=>{});
 });
 
@@ -2100,7 +2365,8 @@ document.getElementById('gold_refresh').addEventListener('click', ()=>{
 });
 
 recalcAll();
-renderRecent();
+// renderRecent(); // Recently-used row disabled in favour of the search bar
+initCalcSearch();
 </script>
 </body>
 </html>
