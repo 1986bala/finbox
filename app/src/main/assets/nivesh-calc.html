@@ -246,6 +246,36 @@
   .disclaimer-body{margin-top:8px;}
   .disclaimer-body.hidden{display:none;}
 
+  /* ---------- Top funds ---------- */
+  .fund-card{
+    background:var(--paper-card);border:1px solid var(--line);border-radius:16px;
+    padding:14px 16px;margin-bottom:10px;display:flex;gap:10px;align-items:center;
+  }
+  .fund-rank{
+    flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--navy);color:var(--gold-bright);
+    font-family:'Fraunces',serif;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;
+  }
+  .fund-body{flex:1;min-width:0;}
+  .fund-name{font-family:'Fraunces',serif;font-weight:600;font-size:14.5px;color:var(--ink);line-height:1.3;}
+  .fund-house{font-size:11px;color:var(--muted);margin-top:2px;}
+  .fund-sip-result{margin-top:10px;}
+  .fsr-value{font-family:'Fraunces',serif;font-weight:700;font-size:19px;color:var(--gold);}
+  .fsr-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
+  .fund-invest-btn{
+    flex-shrink:0;align-self:center;width:74px;padding:9px 5px;border-radius:10px;border:1px solid var(--gold);
+    background:none;color:var(--gold);font-weight:600;font-size:10.5px;line-height:1.3;text-align:center;white-space:normal;
+  }
+  .fund-invest-btn:active{background:rgba(217,169,74,0.12);}
+  .referral-chip{
+    background:var(--paper-card);border:1px dashed var(--gold);border-radius:12px;
+    padding:12px 14px;margin-top:14px;text-align:center;cursor:pointer;
+  }
+  .referral-chip:active{background:rgba(217,169,74,0.08);}
+  .referral-label{display:block;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+  .referral-code{display:block;font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:var(--gold);letter-spacing:1px;margin-top:3px;}
+  .referral-copy-hint{display:block;font-size:10.5px;color:var(--muted);margin-top:3px;}
+  .affiliate-note{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.4;}
+
   /* ---------- Take-home highlight ---------- */
   .takehome-card{
     background:linear-gradient(135deg, rgba(217,169,74,0.20), rgba(217,169,74,0.06));
@@ -375,6 +405,15 @@
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg>
         <div class="card-text"><div class="name">PPF</div>
         <div class="desc">Public Provident Fund maturity</div></div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">Explore funds</div>
+    <div class="grid">
+      <div class="calc-card" onclick="openCalc('topfunds')" style="grid-column:1 / -1;">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18"/><path d="M6 21V10M11 21V6M16 21V13M21 21V3"/></svg>
+        <div class="card-text"><div class="name">Top Mutual Funds</div>
+        <div class="desc">Top-ranked funds by category, and where to invest</div></div>
       </div>
     </div>
 
@@ -1216,6 +1255,49 @@
     </div>
   </div>
 
+  <!-- TOP FUNDS -->
+  <div id="topfunds" class="calc-screen hidden">
+    <div class="toggle-row" id="topfunds_category_toggle">
+      <div class="toggle-btn active" data-v="largecap">Large Cap</div>
+      <div class="toggle-btn" data-v="flexicap">Flexi Cap</div>
+      <div class="toggle-btn" data-v="midcap">Mid Cap</div>
+      <div class="toggle-btn" data-v="smallcap">Small Cap</div>
+      <div class="toggle-btn" data-v="elss">ELSS</div>
+    </div>
+
+    <div class="field" style="margin-top:18px;">
+      <div class="field-top"><span class="field-label">Monthly SIP amount</span>
+        <input class="field-value" id="topfunds_sip_txt" value="₹ 5,000"></div>
+      <input type="range" id="topfunds_sip" min="500" max="50000" step="500" value="5000">
+    </div>
+    <div class="field-label" style="display:block;margin-bottom:6px;">...if you'd started this SIP</div>
+    <div class="toggle-row" id="topfunds_period_toggle">
+      <div class="toggle-btn" data-v="1">1 year ago</div>
+      <div class="toggle-btn active" data-v="3">3 years ago</div>
+      <div class="toggle-btn" data-v="5">5 years ago</div>
+    </div>
+
+    <div id="topfunds_list" style="margin-top:18px;"></div>
+
+    <div class="referral-chip" id="topfunds_referral_chip" onclick="copyReferralCode()">
+      <span class="referral-label">Your Groww referral code</span>
+      <span class="referral-code" id="topfunds_referral_code_text"></span>
+      <span class="referral-copy-hint" id="topfunds_referral_hint">Tap to copy</span>
+    </div>
+    <div class="affiliate-note" style="text-align:center;">Groww uses referral codes, not tracked links — enter this code when you sign up via the buttons above. FinBox may earn a commission, at no extra cost to you.</div>
+
+    <div class="note" id="topfunds_status">Fetching fund data&hellip;</div>
+    <button class="refresh-btn" id="topfunds_refresh" type="button">Refresh fund data</button>
+
+    <div class="disclaimer-box">
+      <div class="disclaimer-head" onclick="toggleTopFundsDisclaimer()">
+        <span>Read before you invest</span>
+        <button class="disclaimer-toggle" id="topfunds_disclaimer_toggle" type="button" aria-label="Show or hide disclaimer">&minus;</button>
+      </div>
+      <div class="disclaimer-body" id="topfunds_disclaimer_body">This is a hypothetical backtest — what your monthly SIP would be worth today had you started it in each fund, computed from actual historical NAVs for a curated set of well-known funds in each category (not the full market). It is not a personal recommendation, and past performance is not indicative of future returns. NAV data via MFAPI.in (AMFI).</div>
+    </div>
+  </div>
+
 </main>
 
 <nav class="bottom" id="bottomNav">
@@ -1265,14 +1347,15 @@ const titles = {
   capgains:['Capital Gains Tax','What you owe when you sell'],
   currency:['Currency Converter','Live exchange rates'],
   gold:['Gold & Silver Price','Live India reference rates'],
-  compare:['Compare Options','Investment mix or loan tenure, side by side']
+  compare:['Compare Options','Investment mix or loan tenure, side by side'],
+  topfunds:['Top Mutual Funds','Best performing funds by category — past 1/3/5-yr returns']
 };
 
 const CALC_NAMES = {
   sip:'SIP', stepup:'Step-up SIP', goalsip:'Goal SIP', lumpsum:'Lumpsum', fd:'Fixed Deposit',
   rd:'Recurring Deposit', epf:'EPF', nps:'NPS', ppf:'PPF', swp:'SWP', loan:'Loan / EMI',
   tax:'Know My Tax & Take-Home', capgains:'Capital Gains Tax', currency:'Currency', gold:'Gold & Silver Price',
-  compare:'Compare Options'
+  compare:'Compare Options', topfunds:'Top Mutual Funds'
 };
 
 function getRecent(){
@@ -1316,6 +1399,8 @@ function initCalcSearch(){
   });
 }
 
+let currentScreenId = 'home';
+
 function goHome(){
   document.getElementById('home').classList.remove('hidden');
   document.querySelectorAll('.calc-screen').forEach(e=>e.classList.add('hidden'));
@@ -1324,6 +1409,7 @@ function goHome(){
   document.querySelector('nav.bottom button[data-t="home"]').classList.add('active');
   window.scrollTo(0,0);
   // renderRecent(); // Recently-used row disabled in favour of the search bar
+  currentScreenId = 'home';
   if(window.AndroidBridge) AndroidBridge.onScreenChanged('home');
 }
 
@@ -1338,9 +1424,11 @@ function openCalc(id){
   const navBtn = document.querySelector('nav.bottom button[data-t="'+id+'"]');
   if(navBtn) navBtn.classList.add('active');
   window.scrollTo(0,0);
+  currentScreenId = id;
   recalcAll();
   if(id==='currency') loadCurrencyScreen(false);
   if(id==='gold') loadGoldScreen(false);
+  if(id==='topfunds') loadTopFundsCategory(currentTopFundsCategory, false);
   // addRecent(id); // Recently-used row disabled in favour of the search bar
   if(window.AndroidBridge) AndroidBridge.onScreenChanged(id);
 }
@@ -1391,7 +1479,23 @@ function bindSlider(sliderId, textId, formatFn, onChange){
     text.value = formatFn(parseFloat(slider.value));
     savePersisted(sliderId, slider.value);
     onChange();
+    notifyCalculationSettled();
   });
+}
+
+// Fires once a slider drag settles (debounced, not on every drag tick) so the native
+// side can count "this calculator has been used" toward the per-screen ad trigger.
+// Home and Top Funds are excluded — home has no calculation, and Top Funds already
+// has its own affiliate flow that shouldn't be interrupted by an ad.
+let calcSettleTimer = null;
+function notifyCalculationSettled(){
+  if(calcSettleTimer) clearTimeout(calcSettleTimer);
+  calcSettleTimer = setTimeout(()=>{
+    if(currentScreenId==='home' || currentScreenId==='topfunds') return;
+    if(window.AndroidBridge && AndroidBridge.onCalculationSettled){
+      AndroidBridge.onCalculationSettled(currentScreenId);
+    }
+  }, 700);
 }
 
 // ================= SIP =================
@@ -2185,7 +2289,7 @@ function makeEditable(textId, sliderId, parseFn, onChange){
  'tax_basic','tax_hra','tax_other','tax_pf_pct','tax_rent','tax_80c','tax_nps','tax_otherded',
  'cg_buy','cg_sell','cg_months','cg_exempt_used',
  'cmp_monthly','cmp_years','cmp_sip_rate','cmp_epf_rate','cmp_ls_rate','cmp_fd_rate',
- 'cmp_loan_amt','cmp_loan_rate','cmp_tenure_a','cmp_tenure_b'].forEach(base=>{
+ 'cmp_loan_amt','cmp_loan_rate','cmp_tenure_a','cmp_tenure_b','topfunds_sip'].forEach(base=>{
   makeEditable(base+'_txt', base, parseFloat, ()=>{});
 });
 
@@ -2365,6 +2469,228 @@ document.getElementById('gold_refresh').addEventListener('click', ()=>{
   localStorage.removeItem('fx_usd');
   loadGoldScreen(true);
 });
+
+// ---- Top funds ----
+// Curated candidate schemes per category (AMFI/MFAPI.in scheme codes, Direct Plan -
+// Growth). Not the full market — a hand-picked set of well-known funds per category.
+// For each, we backtest what a monthly SIP would actually be worth today using real
+// historical NAVs, and show the top 5 by that outcome (same idea as the SIP
+// calculator's maturity value, but computed from a fund's real price history instead
+// of an assumed return rate).
+const TOPFUNDS_CANDIDATES = {
+  largecap: [118825,120586,120465,119598,118632,119250,154155,120392],
+  flexicap: [122639,118535,133839,120492,119292],
+  midcap:   [120505,119071,127042,118989,125307,140228],
+  smallcap: [118778,125354,125497,130503,145206],
+  elss:     [147481,120503,135781,120592,119242,118803,120715]
+};
+const TOPFUNDS_CACHE_MS = 24*60*60*1000; // 24 hours — NAV history doesn't need to be fresher
+const GROWW_AFFILIATE_URL = 'https://groww.in/mutual-funds'; // TODO: replace with your Groww referral signup link
+const GROWW_REFERRAL_CODE = 'YOURCODE'; // TODO: replace with your real Groww referral code
+let currentTopFundsCategory = 'largecap';
+let currentTopFundsPeriod = 3; // years
+let topfundsCategoryData = {}; // category -> [{name, house, navData}], fetched once per session
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function cleanFundName(name){
+  return name.replace(/\s*[-–]\s*Direct\b.*$/i, '').trim();
+}
+function parseMfDate(d){
+  const [dd,mm,yyyy] = d.split('-').map(Number);
+  return new Date(yyyy, mm-1, dd);
+}
+// navData is sorted newest-first (as returned by MFAPI.in); ascNavData is the reverse.
+function navOnOrAfter(ascNavData, targetDate){
+  for(let i=0;i<ascNavData.length;i++){
+    if(parseMfDate(ascNavData[i].date) >= targetDate) return ascNavData[i];
+  }
+  return null;
+}
+
+// Simulates investing `monthlyAmount` on the same monthly cadence into a fund,
+// using the real NAV on/after each due date to work out units bought. Returns null
+// if the fund's history doesn't reach back far enough to cover the full period.
+function computeSipBacktest(navData, monthlyAmount, years){
+  if(!navData || navData.length===0) return null;
+  const latest = navData[0];
+  const latestDate = parseMfDate(latest.date);
+  const startDate = new Date(latestDate);
+  startDate.setFullYear(startDate.getFullYear()-years);
+
+  const oldestDate = parseMfDate(navData[navData.length-1].date);
+  if(oldestDate > startDate) return null;
+
+  const ascNavData = [...navData].reverse();
+  const months = years*12;
+  let totalUnits = 0;
+  for(let i=0;i<months;i++){
+    const dueDate = new Date(startDate);
+    dueDate.setMonth(dueDate.getMonth()+i);
+    const entry = navOnOrAfter(ascNavData, dueDate);
+    if(!entry) return null;
+    const nav = parseFloat(entry.nav);
+    if(nav>0) totalUnits += monthlyAmount/nav;
+  }
+  const investedAmount = monthlyAmount*months;
+  const currentValue = totalUnits * parseFloat(latest.nav);
+  return {investedAmount, currentValue, gain: currentValue-investedAmount};
+}
+
+async function fetchFundData(code){
+  const key = 'mf_'+code;
+  const cached = getCached(key, TOPFUNDS_CACHE_MS);
+  if(cached && !cached.stale) return cached.data;
+  try{
+    const json = await fetchJson(`https://api.mfapi.in/mf/${code}`);
+    setCached(key, json);
+    return json;
+  }catch(e){
+    if(cached) return cached.data;
+    throw e;
+  }
+}
+
+function renderTopFundsList(results, years){
+  const list = document.getElementById('topfunds_list');
+  list.innerHTML = results.map((f,i)=>`
+    <div class="fund-card">
+      <div class="fund-rank">${i+1}</div>
+      <div class="fund-body">
+        <div class="fund-name">${escapeHtml(f.name)}</div>
+        <div class="fund-house">${escapeHtml(f.house)}</div>
+        <div class="fund-sip-result">
+          <div class="fsr-value">${INR(f.currentValue)}</div>
+          <div class="fsr-sub">from ${INR(f.investedAmount)} invested over ${years} yr${years>1?'s':''} &middot; ${f.gain>=0?'+':'−'}${INR(Math.abs(f.gain))} (${(f.gain/f.investedAmount*100).toFixed(1)}%)</div>
+        </div>
+      </div>
+      <button class="fund-invest-btn" type="button" onclick="openAffiliateLink()">Invest in Groww &#8599;</button>
+    </div>
+  `).join('');
+}
+
+function renderTopFundsForCurrentSettings(){
+  const funds = topfundsCategoryData[currentTopFundsCategory];
+  const status = document.getElementById('topfunds_status');
+  if(!funds) return;
+
+  const amount = parseFloat(document.getElementById('topfunds_sip').value) || 0;
+  const years = currentTopFundsPeriod;
+
+  const results = funds.map(f=>{
+    const bt = computeSipBacktest(f.navData, amount, years);
+    return bt ? {name:f.name, house:f.house, ...bt} : null;
+  }).filter(Boolean)
+    .sort((a,b)=>b.currentValue-a.currentValue)
+    .slice(0,5);
+
+  if(results.length===0){
+    document.getElementById('topfunds_list').innerHTML = '';
+    status.textContent = `None of these funds have ${years} years of history yet — try a shorter period.`;
+    return;
+  }
+  renderTopFundsList(results, years);
+  status.textContent = `Based on NAV history as of ${funds[0].navData[0].date}`;
+}
+
+async function loadTopFundsCategory(category, force){
+  currentTopFundsCategory = category;
+  const status = document.getElementById('topfunds_status');
+
+  if(force){
+    (TOPFUNDS_CANDIDATES[category]||[]).forEach(code=>localStorage.removeItem('mf_'+code));
+    delete topfundsCategoryData[category];
+  } else if(topfundsCategoryData[category]){
+    renderTopFundsForCurrentSettings();
+    return;
+  }
+
+  status.textContent = 'Fetching fund data…';
+  document.getElementById('topfunds_list').innerHTML = '';
+  try{
+    const codes = TOPFUNDS_CANDIDATES[category];
+    const results = await Promise.all(codes.map(code=>fetchFundData(code).catch(()=>null)));
+    const funds = results.filter(Boolean).map(json=>({
+      name: cleanFundName(json.meta.scheme_name),
+      house: json.meta.fund_house,
+      navData: json.data
+    }));
+    if(funds.length===0) throw new Error('no data');
+    topfundsCategoryData[category] = funds;
+    renderTopFundsForCurrentSettings();
+  }catch(e){
+    status.textContent = "Couldn't fetch fund data. Check your connection and tap Refresh.";
+  }
+}
+
+function openAffiliateLink(){
+  if(window.AndroidBridge && AndroidBridge.openExternalLink){
+    AndroidBridge.openExternalLink(GROWW_AFFILIATE_URL);
+  } else {
+    window.open(GROWW_AFFILIATE_URL, '_blank');
+  }
+}
+
+function copyReferralCode(){
+  let copied = false;
+  try{
+    if(window.AndroidBridge && AndroidBridge.copyToClipboard){
+      AndroidBridge.copyToClipboard(GROWW_REFERRAL_CODE);
+      copied = true;
+    } else if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(GROWW_REFERRAL_CODE);
+      copied = true;
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = GROWW_REFERRAL_CODE;
+      ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      copied = true;
+    }
+  }catch(e){}
+  const hint = document.getElementById('topfunds_referral_hint');
+  if(hint){
+    hint.textContent = copied ? 'Copied!' : 'Tap to copy';
+    if(copied) setTimeout(()=>{ hint.textContent = 'Tap to copy'; }, 1500);
+  }
+}
+
+function toggleTopFundsDisclaimer(){
+  const body = document.getElementById('topfunds_disclaimer_body');
+  const btn = document.getElementById('topfunds_disclaimer_toggle');
+  const collapsed = body.classList.toggle('hidden');
+  btn.textContent = collapsed ? '+' : '−';
+  try{ localStorage.setItem('topfunds_disclaimer_collapsed', collapsed ? '1' : '0'); }catch(e){}
+}
+try{
+  if(localStorage.getItem('topfunds_disclaimer_collapsed')==='1'){
+    document.getElementById('topfunds_disclaimer_body').classList.add('hidden');
+    document.getElementById('topfunds_disclaimer_toggle').textContent = '+';
+  }
+}catch(e){}
+
+document.querySelectorAll('#topfunds_category_toggle .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#topfunds_category_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    loadTopFundsCategory(btn.dataset.v, false);
+  });
+});
+document.querySelectorAll('#topfunds_period_toggle .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#topfunds_period_toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTopFundsPeriod = parseFloat(btn.dataset.v);
+    renderTopFundsForCurrentSettings();
+  });
+});
+bindSlider('topfunds_sip','topfunds_sip_txt', v=>fmtMoney(v), renderTopFundsForCurrentSettings);
+document.getElementById('topfunds_refresh').addEventListener('click', ()=>loadTopFundsCategory(currentTopFundsCategory, true));
+document.getElementById('topfunds_referral_code_text').textContent = GROWW_REFERRAL_CODE;
 
 recalcAll();
 // renderRecent(); // Recently-used row disabled in favour of the search bar
