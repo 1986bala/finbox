@@ -41,13 +41,15 @@ class MainActivity : AppCompatActivity() {
 
         // Android 15+ (targetSdk 35) draws content edge-to-edge under the status/nav
         // bars by default. The header is an HTML element the WebView can't request
-        // insets for on its own, so pad the native root view for the status bar only -
-        // the bottom ad banner is meant to sit flush at the screen edge, same as most
-        // AdMob-integrated apps, so no bottom inset padding is added.
+        // insets for on its own, so pad the native root view for both bars - bottom
+        // padding also matters whenever the ad banner hasn't loaded yet (or fails to
+        // load), since without it the WebView expands to fill that space and its
+        // bottom-most HTML content (nav row, calculator buttons) ends up drawn under
+        // the system gesture/nav bar.
         val rootLayout = findViewById<android.view.View>(R.id.rootLayout)
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
