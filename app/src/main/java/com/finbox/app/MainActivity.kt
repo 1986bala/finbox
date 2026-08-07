@@ -15,7 +15,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 
-private const val AD_UNIT_ID = "ca-app-pub-9726520012934500/1001393927"
+private const val AD_UNIT_ID = "ca-app-pub-9726520012934500/3007586069"
 
 class MainActivity : AppCompatActivity() {
 
