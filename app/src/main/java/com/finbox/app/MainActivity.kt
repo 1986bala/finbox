@@ -25,7 +25,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 
-private const val AD_UNIT_ID = "ca-app-pub-9726520012934500/3007586069"
+private const val AD_UNIT_ID = "ca-app-pub-6462586343577673/6759104132"
 // TODO: replace with a real Interstitial ad unit ID from the AdMob console (create one
 // under the same FinBox app) before release. This is Google's public test ID - it always
 // serves a "Test Ad"-labeled placeholder and earns nothing.
