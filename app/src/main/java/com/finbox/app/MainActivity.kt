@@ -26,10 +26,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 
 private const val AD_UNIT_ID = "ca-app-pub-6462586343577673/6759104132"
-// TODO: replace with a real Interstitial ad unit ID from the AdMob console (create one
-// under the same FinBox app) before release. This is Google's public test ID - it always
-// serves a "Test Ad"-labeled placeholder and earns nothing.
-private const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
+private const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-6462586343577673/6881026086"
 
 // Show at most every 3rd return to home, and never more than once per 90s even if that
 // threshold is hit quickly - keeps this from feeling like it's punishing normal use.
